@@ -16,6 +16,7 @@
 
 package apphub.service;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -25,6 +26,7 @@ import java.util.Set;
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
+@ApplicationPath("/service")
 public class ServiceApplication extends Application {
     protected final ServiceContext context = new ServiceContext();
 
