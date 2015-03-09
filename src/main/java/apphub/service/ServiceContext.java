@@ -28,8 +28,9 @@ public class ServiceContext extends StaffContext {
     protected final BuildService buildService = new BuildService();
     protected final EnvironmentService environmentService = new EnvironmentService();
     protected final EnvironmentsService environmentsService = new EnvironmentsService();
+    protected final UserActivationService userActivationService = new UserActivationService(userRepository);
     protected final UserSecretService userSecretService = new UserSecretService();
-    protected final UserService userService = new UserService();
+    protected final UserService userService = new UserService(userRepository);
     protected final VersionService versionService = new VersionService();
     protected final TestService testService = new TestService();
 
@@ -54,6 +55,10 @@ public class ServiceContext extends StaffContext {
 
     public EnvironmentsService getEnvironmentsService() {
         return environmentsService;
+    }
+
+    public UserActivationService getUserActivationService() {
+        return userActivationService;
     }
 
     public UserSecretService getUserSecretService() {
