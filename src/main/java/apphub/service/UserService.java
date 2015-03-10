@@ -16,12 +16,15 @@
 
 package apphub.service;
 
+import apphub.service.api.Application;
+import apphub.service.api.Environment;
 import apphub.service.api.IUserService;
 import apphub.service.api.User;
 import apphub.staff.repository.UserRepository;
 import apphub.staff.utility.SecretUtil;
 import apphub.utility.IOUtil;
 import apphub.utility.PropertyUtil;
+import apphub.utility.TimeUtil;
 import apphub.utility.Util;
 
 import javax.mail.Message;
@@ -30,6 +33,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
@@ -45,7 +51,12 @@ public class UserService implements IUserService {
 
     @Override
     public User get(String secret, String id) {
-        return null;
+        Timestamp ts = TimeUtil.currentTime();
+        List<Application> applications = Collections.emptyList();
+        List<Environment> environments = Collections.emptyList();
+        User user = new User(id, "Dmitry Kotlyarov", "kotlyarov.dmitry@gmail.com", "https://www.apphub.pro/", "AppHub Pro", "Saint-Petersburg", null,
+                             ts, ts, applications, environments);
+        return user;
     }
 
     @Override
