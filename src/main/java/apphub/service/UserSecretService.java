@@ -17,18 +17,30 @@
 package apphub.service;
 
 import apphub.service.api.IUserSecretService;
+import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
+import apphub.staff.model.tables.TUser;
+import apphub.staff.repository.UserRepository;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class UserSecretService implements IUserSecretService {
-    public UserSecretService() {
+    protected final Database database;
+    protected final UserRepository userRepository;
+
+    public UserSecretService(Database database, UserRepository userRepository) {
+        this.database = database;
+        this.userRepository = userRepository;
     }
 
     @Override
     public String get(String id, String password) {
-        return null;
+        try (Transaction tx = new Transaction(database, "dmktv")) {
+            String v = tx.select(TUser.T_USER.ID).from(TUser.T_USER).where(TUser.T_USER.ID.eq("dmktv")).fetchOne().value1();
+            return tx.getUser();
+        }
     }
 
     @Override

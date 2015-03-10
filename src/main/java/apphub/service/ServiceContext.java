@@ -29,7 +29,7 @@ public class ServiceContext extends StaffContext {
     protected final EnvironmentService environmentService = new EnvironmentService();
     protected final EnvironmentsService environmentsService = new EnvironmentsService();
     protected final UserActivationService userActivationService = new UserActivationService(userRepository);
-    protected final UserSecretService userSecretService = new UserSecretService();
+    protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
     protected final UserService userService = new UserService(userRepository);
     protected final VersionService versionService = new VersionService();
     protected final TestService testService = new TestService();
