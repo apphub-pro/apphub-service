@@ -14,26 +14,15 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import apphub.service.api.IBuildService;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-@Path("/test")
-public class TestService {
-    public TestService() {
-    }
-
-    @GET
-    @Path("/get")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String get() {
-        return "TEST";
+public class BuildService implements IBuildService {
+    public BuildService() {
     }
 }

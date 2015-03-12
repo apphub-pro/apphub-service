@@ -14,15 +14,23 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
-import apphub.service.api.IBuildService;
+import apphub.service.api.Environment;
+import apphub.service.api.IEnvironmentsService;
+
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class BuildService implements IBuildService {
-    public BuildService() {
+public class EnvironmentsService implements IEnvironmentsService {
+    public EnvironmentsService() {
+    }
+
+    @Override
+    public List<Environment> get(String secret) {
+        return null;
     }
 }

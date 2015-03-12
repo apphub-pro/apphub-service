@@ -14,37 +14,24 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
-import apphub.service.api.IUserSecretService;
-import apphub.staff.database.Database;
-import apphub.staff.database.Transaction;
-import apphub.staff.model.tables.TUser;
+import apphub.service.api.IUserActivationService;
 import apphub.staff.repository.UserRepository;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class UserSecretService implements IUserSecretService {
-    protected final Database database;
+public class UserActivationService implements IUserActivationService {
     protected final UserRepository userRepository;
 
-    public UserSecretService(Database database, UserRepository userRepository) {
-        this.database = database;
+    public UserActivationService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public String get(String id, String password) {
-        try (Transaction tx = new Transaction(database, "dmktv")) {
-            String v = tx.select(TUser.T_USER.ID).from(TUser.T_USER).where(TUser.T_USER.ID.eq("dmktv")).fetchOne().value1();
-            return tx.getUser();
-        }
-    }
-
-    @Override
-    public String post(String id, String password) {
-        return null;
+    public String get(String key) {
+        return "ACTIVATION IS SUCCESSFUL";
     }
 }

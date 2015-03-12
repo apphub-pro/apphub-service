@@ -14,27 +14,35 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
 import apphub.service.api.Application;
-import apphub.service.api.IApplicationsService;
+import apphub.service.api.IApplicationService;
 import apphub.staff.repository.ApplicationRepository;
-
-import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class ApplicationsService implements IApplicationsService {
+public class ApplicationService implements IApplicationService {
     protected final ApplicationRepository applicationRepository;
 
-    public ApplicationsService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository) {
         this.applicationRepository = applicationRepository;
     }
 
     @Override
-    public List<Application> get(String secret) {
+    public Application get(String secret, String id) {
+        return null;
+    }
+
+    @Override
+    public Application put(String secret, Application application) {
+        return null;
+    }
+
+    @Override
+    public Application post(String secret, Application application) {
         return null;
     }
 }

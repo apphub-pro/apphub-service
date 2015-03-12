@@ -14,24 +14,27 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
-import apphub.service.api.IUserActivationService;
-import apphub.staff.repository.UserRepository;
+import apphub.service.api.Application;
+import apphub.service.api.IApplicationsService;
+import apphub.staff.repository.ApplicationRepository;
+
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class UserActivationService implements IUserActivationService {
-    protected final UserRepository userRepository;
+public class ApplicationsService implements IApplicationsService {
+    protected final ApplicationRepository applicationRepository;
 
-    public UserActivationService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public ApplicationsService(ApplicationRepository applicationRepository) {
+        this.applicationRepository = applicationRepository;
     }
 
     @Override
-    public String get(String key) {
-        return "ACTIVATION IS SUCCESSFUL";
+    public List<Application> get(String secret) {
+        return null;
     }
 }

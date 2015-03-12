@@ -14,7 +14,7 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
 import apphub.service.api.Environment;
 import apphub.service.api.IEnvironmentService;

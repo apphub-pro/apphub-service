@@ -14,23 +14,26 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service;
+package apphub.service.service;
 
-import apphub.service.api.Environment;
-import apphub.service.api.IEnvironmentsService;
-
-import java.util.List;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class EnvironmentsService implements IEnvironmentsService {
-    public EnvironmentsService() {
+@Path("/test")
+public class TestService {
+    public TestService() {
     }
 
-    @Override
-    public List<Environment> get(String secret) {
-        return null;
+    @GET
+    @Path("/get")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String get() {
+        return "TEST";
     }
 }
