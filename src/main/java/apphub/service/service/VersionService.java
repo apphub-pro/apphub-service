@@ -17,6 +17,9 @@
 package apphub.service.service;
 
 import apphub.service.api.IVersionService;
+import apphub.service.api.Version;
+
+import javax.ws.rs.HeaderParam;
 
 /**
  * @author Dmitry Kotlyarov
@@ -24,5 +27,20 @@ import apphub.service.api.IVersionService;
  */
 public class VersionService implements IVersionService {
     public VersionService() {
+    }
+
+    @Override
+    public Version get(@HeaderParam("Secret") String secret, @HeaderParam("Id") String id) {
+        return null;
+    }
+
+    @Override
+    public Version put(@HeaderParam("Secret") String secret, Version version) {
+        return null;
+    }
+
+    @Override
+    public Version post(@HeaderParam("Secret") String secret, Version version) {
+        return null;
     }
 }

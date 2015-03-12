@@ -20,6 +20,8 @@ import apphub.service.api.Application;
 import apphub.service.api.Environment;
 import apphub.service.api.IUserService;
 import apphub.service.api.User;
+import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
 import apphub.staff.utility.SecretUtil;
 import apphub.utility.IOUtil;
@@ -33,6 +35,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
@@ -42,42 +46,57 @@ import java.util.List;
  * @since 1.0
  */
 public class UserService implements IUserService {
+    protected final Database database;
     protected final UserRepository userRepository;
     protected final String userActivationEmail = IOUtil.getResourceAsString(UserService.class, "user-activation.email");
 
-    public UserService(UserRepository userRepository) {
+    public UserService(Database database, UserRepository userRepository) {
+        this.database = database;
         this.userRepository = userRepository;
     }
 
     @Override
     public User get(String secret, String id) {
-        Timestamp ts = TimeUtil.currentTime();
-        List<Application> applications = Collections.emptyList();
-        List<Environment> environments = Collections.emptyList();
-        User user = new User(id, "Dmitry Kotlyarov", "kotlyarov.dmitry@gmail.com", "https://www.apphub.pro/", "AppHub Pro", "Saint-Petersburg", null,
-                             ts, ts, applications, environments);
-        return user;
+        try (Transaction tx = new Transaction(database, id)) {
+            return userRepository.getById(tx, id);
+        }
     }
 
     @Override
     public User put(String password, User user) {
-        Session session = Session.getDefaultInstance(PropertyUtil.toProperties(new String[][] {{"mail.smtp.host", "localhost"}}));
-        MimeMessage message = new MimeMessage(session);
-        try {
-            message.setFrom(new InternetAddress("staff@apphub.pro"));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.email));
-            message.setSubject("APPHUB USER ACTIVATION NOTIFICATION", Util.CHARSET.name());
-            message.setText(String.format(userActivationEmail, user.name, user.id,
-                            String.format("https://service.dev.apphub.pro/service/user/activation/%s", SecretUtil.randomSecret())), Util.CHARSET.name());
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+        try (Transaction tx = new Transaction(database, false, null)) {
+            if (!userRepository.existById(tx, user.id)) {
+                if (!userRepository.existByEmail(tx, user.email)) {
+                    userRepository.insert(tx, user, password);
+                    sendActivationEmail(user.id, user.name, user.email);
+                    tx.commit();
+                    return user;
+                } else {
+                    throw new ServerErrorException(String.format("User with email '%s' is found", user.email), Response.Status.FOUND);
+                }
+            } else {
+                throw new ServerErrorException(String.format("User with id '%s' is found", user.id), Response.Status.FOUND);
+            }
         }
-        return user;
     }
 
     @Override
     public User post(String secret, User user) {
         return null;
+    }
+
+    private void sendActivationEmail(String id, String name, String email) {
+        Session session = Session.getDefaultInstance(PropertyUtil.toProperties(new String[][] {{"mail.smtp.host", "localhost"}}));
+        MimeMessage message = new MimeMessage(session);
+        try {
+            message.setFrom(new InternetAddress("staff@apphub.pro"));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            message.setSubject("APPHUB USER ACTIVATION NOTIFICATION", Util.CHARSET.name());
+            message.setText(String.format(userActivationEmail, name, id,
+                            String.format("https://service.dev.apphub.pro/service/user/activation/%s", SecretUtil.randomSecret())), Util.CHARSET.name());
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

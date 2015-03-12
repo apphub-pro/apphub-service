@@ -16,6 +16,16 @@
 
 package apphub.service;
 
+import apphub.service.service.ApplicationService;
+import apphub.service.service.ApplicationsService;
+import apphub.service.service.BuildService;
+import apphub.service.service.EnvironmentService;
+import apphub.service.service.EnvironmentsService;
+import apphub.service.service.TestService;
+import apphub.service.service.UserActivationService;
+import apphub.service.service.UserSecretService;
+import apphub.service.service.UserService;
+import apphub.service.service.VersionService;
 import apphub.staff.StaffContext;
 
 /**
@@ -30,7 +40,7 @@ public class ServiceContext extends StaffContext {
     protected final EnvironmentsService environmentsService = new EnvironmentsService();
     protected final UserActivationService userActivationService = new UserActivationService(userRepository);
     protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
-    protected final UserService userService = new UserService(userRepository);
+    protected final UserService userService = new UserService(database, userRepository);
     protected final VersionService versionService = new VersionService();
     protected final TestService testService = new TestService();
 

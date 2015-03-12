@@ -16,7 +16,10 @@
 
 package apphub.service.service;
 
+import apphub.service.api.Build;
 import apphub.service.api.IBuildService;
+
+import javax.ws.rs.HeaderParam;
 
 /**
  * @author Dmitry Kotlyarov
@@ -24,5 +27,25 @@ import apphub.service.api.IBuildService;
  */
 public class BuildService implements IBuildService {
     public BuildService() {
+    }
+
+    @Override
+    public Build get(@HeaderParam("Secret") String secret, @HeaderParam("Id") String id) {
+        return null;
+    }
+
+    @Override
+    public Build put(@HeaderParam("Secret") String secret, Build build) {
+        return null;
+    }
+
+    @Override
+    public Build post(@HeaderParam("Secret") String secret, Build build) {
+        return null;
+    }
+
+    @Override
+    public Build delete(@HeaderParam("Secret") String secret, @HeaderParam("Id") String id) {
+        return null;
     }
 }
