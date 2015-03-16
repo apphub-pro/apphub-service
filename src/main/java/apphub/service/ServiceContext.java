@@ -21,6 +21,7 @@ import apphub.service.service.ApplicationsService;
 import apphub.service.service.BuildService;
 import apphub.service.service.EnvironmentService;
 import apphub.service.service.EnvironmentsService;
+import apphub.service.ldap.LdapService;
 import apphub.service.service.TestService;
 import apphub.service.service.UserActivationService;
 import apphub.service.service.UserSecretService;
@@ -42,6 +43,7 @@ public class ServiceContext extends StaffContext {
     protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
     protected final UserService userService = new UserService(database, userRepository);
     protected final VersionService versionService = new VersionService();
+    protected final LdapService ldapService = new LdapService(database, userRepository);
     protected final TestService testService = new TestService();
 
     public ServiceContext() {
@@ -81,6 +83,10 @@ public class ServiceContext extends StaffContext {
 
     public VersionService getVersionService() {
         return versionService;
+    }
+
+    public LdapService getLdapService() {
+        return ldapService;
     }
 
     public TestService getTestService() {
