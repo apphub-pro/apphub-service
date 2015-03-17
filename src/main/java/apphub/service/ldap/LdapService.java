@@ -18,10 +18,20 @@ package apphub.service.ldap;
 
 import apphub.staff.database.Database;
 import apphub.staff.repository.UserRepository;
+import org.apache.directory.api.ldap.model.name.Dn;
+import org.apache.directory.api.ldap.model.schema.SchemaManager;
+import org.apache.directory.api.ldap.schemamanager.impl.DefaultSchemaManager;
+import org.apache.directory.server.constants.ServerDNConstants;
 import org.apache.directory.server.core.DefaultDirectoryService;
 import org.apache.directory.server.core.api.DirectoryService;
+import org.apache.directory.server.core.api.DnFactory;
+import org.apache.directory.server.core.api.InstanceLayout;
+import org.apache.directory.server.core.api.schema.SchemaPartition;
+import org.apache.directory.server.core.partition.impl.btree.jdbm.JdbmPartition;
 import org.apache.directory.server.ldap.LdapServer;
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
+
+import java.io.File;
 
 /**
  * @author Dmitry Kotlyarov
@@ -30,20 +40,20 @@ import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 public class LdapService {
     protected final Database database;
     protected final UserRepository userRepository;
+    protected final String tempDirectory;
     protected final DirectoryService directoryService;
     protected final LdapAuthenticator ldapAuthenticator;
     protected final LdapServer ldapServer;
 
-    public LdapService(Database database, UserRepository userRepository) {
+    public LdapService(Database database, UserRepository userRepository, String tempDirectory) {
         this.database = database;
         this.userRepository = userRepository;
-        this.directoryService = createDirectoryService();
+        this.tempDirectory = String.format("%s/ldap", tempDirectory);
+        this.directoryService = createDirectoryService(this.tempDirectory);
         this.ldapAuthenticator = new LdapAuthenticator(database, userRepository, directoryService);
-        this.ldapServer = new LdapServer();
+        this.ldapServer = createLdapServer(directoryService);
 
         try {
-            ldapServer.setTransports(new TcpTransport(8389));
-            ldapServer.setDirectoryService(directoryService);
             ldapServer.start();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -58,6 +68,10 @@ public class LdapService {
         return userRepository;
     }
 
+    public String getTempDirectory() {
+        return tempDirectory;
+    }
+
     public DirectoryService getDirectoryService() {
         return directoryService;
     }
@@ -70,9 +84,55 @@ public class LdapService {
         return ldapServer;
     }
 
-    private static DirectoryService createDirectoryService() {
+    private static DirectoryService createDirectoryService(String tempDirectory) {
+        File dir = new File(tempDirectory);
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new RuntimeException(String.format("Temp directory '%s' could not be created", tempDirectory));
+            }
+        }
         try {
-            return new DefaultDirectoryService();
+            InstanceLayout layout = new InstanceLayout(dir);
+            SchemaManager schemaManager = new DefaultSchemaManager();
+
+            DirectoryService service = new DefaultDirectoryService();
+            service.setInstanceLayout(layout);
+            service.setSchemaManager(schemaManager);
+
+            DnFactory dnFactory = service.getDnFactory();
+
+            SchemaPartition schemaPartition = new SchemaPartition(schemaManager);
+            //schemaPartition.setWrappedPartition(schemaLdifPartition);
+            service.setSchemaPartition(schemaPartition);
+
+            JdbmPartition systemPartition = new JdbmPartition(schemaManager, dnFactory);
+            systemPartition.setId("system");
+            systemPartition.setPartitionPath(new File(service.getInstanceLayout().getPartitionsDirectory(), systemPartition.getId()).toURI());
+            systemPartition.setSuffixDn(new Dn(ServerDNConstants.SYSTEM_DN));
+            service.setSystemPartition(systemPartition);
+
+            service.getChangeLog().setEnabled(false);
+            service.setDenormalizeOpAttrsEnabled(true);
+
+            JdbmPartition partition = new JdbmPartition(schemaManager, dnFactory);
+            partition.setId("apache");
+            partition.setPartitionPath(new File(service.getInstanceLayout().getPartitionsDirectory(), partition.getId()).toURI());
+            partition.setSuffixDn(new Dn("dc=apache,dc=org"));
+            service.addPartition(partition);
+
+            service.startup();
+            return service;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static LdapServer createLdapServer(DirectoryService directoryService) {
+        try {
+            LdapServer server = new LdapServer();
+            server.setTransports(new TcpTransport(8389));
+            server.setDirectoryService(directoryService);
+            return server;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

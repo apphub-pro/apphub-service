@@ -28,12 +28,16 @@ import apphub.service.service.UserSecretService;
 import apphub.service.service.UserService;
 import apphub.service.service.VersionService;
 import apphub.staff.StaffContext;
+import apphub.utility.PropertyUtil;
+
+import java.io.File;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class ServiceContext extends StaffContext {
+    protected final String tempDirectory = String.format("%s/apphub/apphub-service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
     protected final ApplicationService applicationService = new ApplicationService(applicationRepository);
     protected final ApplicationsService applicationsService = new ApplicationsService(applicationRepository);
     protected final BuildService buildService = new BuildService();
@@ -43,7 +47,7 @@ public class ServiceContext extends StaffContext {
     protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
     protected final UserService userService = new UserService(database, userRepository);
     protected final VersionService versionService = new VersionService();
-    protected final LdapService ldapService = new LdapService(database, userRepository);
+    protected final LdapService ldapService = new LdapService(database, userRepository, tempDirectory);
     protected final TestService testService = new TestService();
 
     public ServiceContext() {
