@@ -87,10 +87,9 @@ public class LdapAuthenticator implements Authenticator {
         byte[] passwordData = bindOperationContext.getCredentials();
         String password = new String(passwordData);
         if (password.equals("dmktv")) {
-            return new LdapPrincipal();
+            return new LdapPrincipal(directoryService.getSchemaManager(), bindOperationContext.getDn(), AuthenticationLevel.SIMPLE, passwordData);
         } else {
-            String message = I18n.err(I18n.ERR_230, bindOperationContext.getDn().getName());
-            throw new LdapAuthenticationException(message);
+            throw new LdapAuthenticationException(I18n.err(I18n.ERR_230, bindOperationContext.getDn().getName()));
         }
     }
 
