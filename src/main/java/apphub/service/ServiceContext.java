@@ -37,7 +37,7 @@ import java.io.File;
  * @since 1.0
  */
 public class ServiceContext extends StaffContext {
-    protected final String tempDirectory = String.format("%s/apphub/apphub-service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
+    protected final String tempDirectory = String.format("%s/apphub/service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
     protected final ApplicationService applicationService = new ApplicationService(applicationRepository);
     protected final ApplicationsService applicationsService = new ApplicationsService(applicationRepository);
     protected final BuildService buildService = new BuildService();
