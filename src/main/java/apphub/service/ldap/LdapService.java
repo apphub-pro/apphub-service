@@ -52,7 +52,7 @@ public class LdapService {
         this.database = database;
         this.userRepository = userRepository;
         this.tempDirectory = String.format("%s/ldap", tempDirectory);
-        this.directoryService = createDirectoryService(this.tempDirectory);
+        this.directoryService = createDirectoryService(database, this.tempDirectory);
         this.ldapAuthenticator = new LdapAuthenticator(database, userRepository, directoryService);
         this.ldapServer = createLdapServer(directoryService);
 
@@ -87,7 +87,7 @@ public class LdapService {
         return ldapServer;
     }
 
-    private static DirectoryService createDirectoryService(String tempDirectory) {
+    private static DirectoryService createDirectoryService(Database database, String tempDirectory) {
         File dir = new File(tempDirectory);
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
@@ -126,11 +126,7 @@ public class LdapService {
             service.getChangeLog().setEnabled(false);
             service.setDenormalizeOpAttrsEnabled(true);
 
-            JdbmPartition partition = new JdbmPartition(schemaManager, dnFactory);
-            partition.setId("apache");
-            partition.setPartitionPath(new File(layout.getPartitionsDirectory(), partition.getId()).toURI());
-            partition.setSuffixDn(new Dn("dc=apache,dc=org"));
-            service.addPartition(partition);
+            service.addPartition(new LdapPartition(database, schemaManager, "apphub", new Dn("dc=apphub")));
 
             service.startup();
             return service;
