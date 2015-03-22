@@ -24,6 +24,7 @@ import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.api.ldap.model.schema.SchemaManager;
+import org.apache.directory.server.core.api.entry.ClonedServerEntry;
 import org.apache.directory.server.core.api.filtering.EntryFilteringCursor;
 import org.apache.directory.server.core.api.filtering.EntryFilteringCursorImpl;
 import org.apache.directory.server.core.api.interceptor.context.AddOperationContext;
@@ -87,18 +88,28 @@ public class LdapPartition extends AbstractPartition {
 
     @Override
     public EntryFilteringCursor search(SearchOperationContext searchContext) throws LdapException {
-        Entry entry = new DefaultEntry(schemaManager, suffixDn);
-        return new EntryFilteringCursorImpl(new ListCursor<>(Collections.singletonList(entry)), searchContext, schemaManager);
+        String[] returningAttributesString = searchContext.getReturningAttributesString();
+        if ((returningAttributesString == null) || (returningAttributesString.length == 0)) {
+            Entry entry = new ClonedServerEntry(new DefaultEntry(schemaManager, suffixDn));
+            return new EntryFilteringCursorImpl(new ListCursor<>(Collections.singletonList(entry)), searchContext, schemaManager);
+        } else {
+            return new EntryFilteringCursorImpl(new ListCursor<>(Collections.<Entry>emptyList()), searchContext, schemaManager);
+        }
     }
 
     @Override
     public Entry lookup(LookupOperationContext lookupContext) throws LdapException {
-        return null;
+        String[] returningAttributesString = lookupContext.getReturningAttributesString();
+        if ((returningAttributesString == null) || (returningAttributesString.length == 0)) {
+            return new ClonedServerEntry(new DefaultEntry(schemaManager, suffixDn));
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasEntry(HasEntryOperationContext hasEntryContext) throws LdapException {
-        return false;
+        return true;
     }
 
     @Override
