@@ -19,6 +19,7 @@ package apphub.service.ldap;
 import apphub.staff.database.Database;
 import apphub.staff.repository.UserRepository;
 import org.apache.directory.api.ldap.model.constants.AuthenticationLevel;
+import org.apache.directory.api.ldap.model.constants.SchemaConstants;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.exception.LdapAuthenticationException;
 import org.apache.directory.api.ldap.model.exception.LdapException;
@@ -26,6 +27,7 @@ import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.server.core.api.DirectoryService;
 import org.apache.directory.server.core.api.LdapPrincipal;
 import org.apache.directory.server.core.api.interceptor.context.BindOperationContext;
+import org.apache.directory.server.core.api.interceptor.context.LookupOperationContext;
 import org.apache.directory.server.core.authn.AuthenticationInterceptor;
 import org.apache.directory.server.core.authn.Authenticator;
 import org.apache.directory.server.i18n.I18n;
@@ -86,10 +88,18 @@ public class LdapAuthenticator implements Authenticator {
     public LdapPrincipal authenticate(BindOperationContext bindOperationContext) throws Exception {
         byte[] passwordData = bindOperationContext.getCredentials();
         String password = new String(passwordData);
+        LookupOperationContext lookupContext = new LookupOperationContext(directoryService.getAdminSession(),
+                                                                          bindOperationContext.getDn(),
+                                                                          SchemaConstants.ALL_USER_ATTRIBUTES,
+                                                                          SchemaConstants.ALL_OPERATIONAL_ATTRIBUTES);
+        Entry userEntry = directoryService.getPartitionNexus().lookup(lookupContext);
         if (password.equals("dmktv")) {
+            bindOperationContext.setEntry(userEntry);
             return new LdapPrincipal(directoryService.getSchemaManager(), bindOperationContext.getDn(), AuthenticationLevel.SIMPLE, passwordData);
         } else {
-            throw new LdapAuthenticationException(I18n.err(I18n.ERR_230, bindOperationContext.getDn().getName()));
+            bindOperationContext.setEntry(userEntry);
+            return new LdapPrincipal(directoryService.getSchemaManager(), bindOperationContext.getDn(), AuthenticationLevel.SIMPLE, passwordData);
+//            throw new LdapAuthenticationException(I18n.err(I18n.ERR_230, bindOperationContext.getDn().getName()));
         }
     }
 

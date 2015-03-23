@@ -68,7 +68,7 @@ public class UserService implements IUserService {
             if (!userRepository.existById(tx, user.id)) {
                 if (!userRepository.existByEmail(tx, user.email)) {
                     userRepository.insert(tx, user, password);
-                    sendActivationEmail(user.id, user.name, user.email);
+//                    sendActivationEmail(user.id, user.name, user.email);
                     tx.commit();
                     return user;
                 } else {

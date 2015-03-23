@@ -17,6 +17,7 @@
 package apphub.service.ldap;
 
 import apphub.staff.database.Database;
+import org.apache.directory.api.ldap.model.constants.SchemaConstants;
 import org.apache.directory.api.ldap.model.cursor.ListCursor;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -90,8 +91,15 @@ public class LdapPartition extends AbstractPartition {
     public EntryFilteringCursor search(SearchOperationContext searchContext) throws LdapException {
         String[] returningAttributesString = searchContext.getReturningAttributesString();
         if ((returningAttributesString == null) || (returningAttributesString.length == 0)) {
-            Entry entry = new ClonedServerEntry(new DefaultEntry(schemaManager, suffixDn));
-            return new EntryFilteringCursorImpl(new ListCursor<>(Collections.singletonList(entry)), searchContext, schemaManager);
+            Dn dn = suffixDn;
+            if (searchContext.getFilter() != null) {
+                dn = new Dn(suffixDn.getSchemaManager(), "uid=dmktv", dn.toString());
+            }
+            Entry entry = new DefaultEntry(schemaManager, dn);
+            entry.put("uid", "dmktv");
+//            entry.put(SchemaConstants.REF_AT, new String[] {});
+            Entry clonedEntry = new ClonedServerEntry(entry);
+            return new EntryFilteringCursorImpl(new ListCursor<>(Collections.singletonList(clonedEntry)), searchContext, schemaManager);
         } else {
             return new EntryFilteringCursorImpl(new ListCursor<>(Collections.<Entry>emptyList()), searchContext, schemaManager);
         }
@@ -101,7 +109,10 @@ public class LdapPartition extends AbstractPartition {
     public Entry lookup(LookupOperationContext lookupContext) throws LdapException {
         String[] returningAttributesString = lookupContext.getReturningAttributesString();
         if ((returningAttributesString == null) || (returningAttributesString.length == 0)) {
-            return new ClonedServerEntry(new DefaultEntry(schemaManager, suffixDn));
+            Entry entry = new DefaultEntry(schemaManager, lookupContext.getDn());
+            entry.put("uid", "dmktv");
+//            entry.put(SchemaConstants.REF_AT, new String[] {});
+            return new ClonedServerEntry(entry);
         } else {
             return null;
         }
