@@ -46,6 +46,11 @@
             <name>Local Repository</name>
             <url>file://${env.M2_REPO}</url>
         </repository>
+        <repository>
+            <id>forgerock-releases</id>
+            <name>Forgerock Releases Repository</name>
+            <url>http://maven.forgerock.org/repo/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -60,9 +65,9 @@
             <version>3.0.10.Final</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-service</artifactId>
-            <version>2.0.0-M19</version>
+            <groupId>org.forgerock.opendj</groupId>
+            <artifactId>opendj-ldap-sdk</artifactId>
+            <version>2.6.10</version>
         </dependency>
     </dependencies>
 
