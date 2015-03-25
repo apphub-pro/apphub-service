@@ -26,6 +26,7 @@ import apphub.staff.repository.UserRepository;
 import apphub.staff.utility.SecretUtil;
 import apphub.utility.IOUtil;
 import apphub.utility.PropertyUtil;
+import apphub.utility.StringUtil;
 import apphub.utility.TimeUtil;
 import apphub.utility.Util;
 
@@ -67,7 +68,7 @@ public class UserService implements IUserService {
         try (Transaction tx = new Transaction(database, false, null)) {
             if (!userRepository.existById(tx, user.id)) {
                 if (!userRepository.existByEmail(tx, user.email)) {
-                    userRepository.insert(tx, user, password);
+                    userRepository.insert(tx, user, SecretUtil.randomSecret(), StringUtil.toBytes(password));
 //                    sendActivationEmail(user.id, user.name, user.email);
                     tx.commit();
                     return user;
@@ -85,7 +86,7 @@ public class UserService implements IUserService {
         return null;
     }
 
-    private void sendActivationEmail(String id, String name, String email) {
+    private void sendActivationEmail(String id, String name, String email, String code) {
         Session session = Session.getDefaultInstance(PropertyUtil.toProperties(new String[][] {{"mail.smtp.host", "localhost"}}));
         MimeMessage message = new MimeMessage(session);
         try {
@@ -93,7 +94,7 @@ public class UserService implements IUserService {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("APPHUB USER ACTIVATION NOTIFICATION", Util.CHARSET.name());
             message.setText(String.format(userActivationEmail, name, id,
-                            String.format("https://service.dev.apphub.pro/service/user/activation/%s", SecretUtil.randomSecret())), Util.CHARSET.name());
+                            String.format("https://service.dev.apphub.pro/service/user/activation/%s", code)), Util.CHARSET.name());
             Transport.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
