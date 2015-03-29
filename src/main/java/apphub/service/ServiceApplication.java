@@ -35,9 +35,11 @@ public class ServiceApplication extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        LinkedHashSet<Object> singletons = new LinkedHashSet<>(10);
+        LinkedHashSet<Object> singletons = new LinkedHashSet<>(12);
         singletons.add(context.getApplicationService());
         singletons.add(context.getApplicationsService());
+        singletons.add(context.getApplicationUserService());
+        singletons.add(context.getApplicationUsersService());
         singletons.add(context.getBuildService());
         singletons.add(context.getEnvironmentService());
         singletons.add(context.getEnvironmentsService());

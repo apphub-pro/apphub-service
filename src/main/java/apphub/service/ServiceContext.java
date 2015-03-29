@@ -17,6 +17,8 @@
 package apphub.service;
 
 import apphub.service.service.ApplicationService;
+import apphub.service.service.ApplicationUserService;
+import apphub.service.service.ApplicationUsersService;
 import apphub.service.service.ApplicationsService;
 import apphub.service.service.BuildService;
 import apphub.service.service.EnvironmentService;
@@ -40,6 +42,8 @@ public class ServiceContext extends StaffContext {
     protected final String tempDirectory = String.format("%s/apphub/service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
     protected final ApplicationService applicationService = new ApplicationService(applicationRepository);
     protected final ApplicationsService applicationsService = new ApplicationsService(applicationRepository);
+    protected final ApplicationUserService applicationUserService = new ApplicationUserService(applicationUserRepository);
+    protected final ApplicationUsersService applicationUsersService = new ApplicationUsersService(applicationUserRepository);
     protected final BuildService buildService = new BuildService();
     protected final EnvironmentService environmentService = new EnvironmentService();
     protected final EnvironmentsService environmentsService = new EnvironmentsService();
@@ -53,12 +57,24 @@ public class ServiceContext extends StaffContext {
     public ServiceContext() {
     }
 
+    public String getTempDirectory() {
+        return tempDirectory;
+    }
+
     public ApplicationService getApplicationService() {
         return applicationService;
     }
 
     public ApplicationsService getApplicationsService() {
         return applicationsService;
+    }
+
+    public ApplicationUserService getApplicationUserService() {
+        return applicationUserService;
+    }
+
+    public ApplicationUsersService getApplicationUsersService() {
+        return applicationUsersService;
     }
 
     public BuildService getBuildService() {

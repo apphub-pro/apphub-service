@@ -16,25 +16,26 @@
 
 package apphub.service.service;
 
-import apphub.service.api.Application;
-import apphub.service.api.IApplicationsService;
-import apphub.staff.repository.ApplicationRepository;
+import apphub.service.api.ApplicationUser;
+import apphub.service.api.IApplicationUsersService;
+import apphub.staff.repository.ApplicationUserRepository;
 
-import java.util.List;
+import javax.ws.rs.HeaderParam;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class ApplicationsService implements IApplicationsService {
-    protected final ApplicationRepository applicationRepository;
+public class ApplicationUsersService implements IApplicationUsersService {
+    protected final ApplicationUserRepository applicationUserRepository;
 
-    public ApplicationsService(ApplicationRepository applicationRepository) {
-        this.applicationRepository = applicationRepository;
+    public ApplicationUsersService(ApplicationUserRepository applicationUserRepository) {
+        this.applicationUserRepository = applicationUserRepository;
     }
 
     @Override
-    public Application[] get(String secret) {
-        return null;
+    public ApplicationUser[] get(@HeaderParam("Secret") String secret,
+                                 @HeaderParam("Application") String application) {
+        return new ApplicationUser[0];
     }
 }
