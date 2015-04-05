@@ -68,7 +68,7 @@ public class UserService implements IUserService {
         try (Transaction tx = new Transaction(database, false, null)) {
             if (!userRepository.existById(tx, user.id)) {
                 if (!userRepository.existByEmail(tx, user.email)) {
-                    userRepository.insert(tx, user, SecretUtil.randomSecret(), StringUtil.toBytes(password));
+                    userRepository.insert(tx, user, StringUtil.toBytes(password), SecretUtil.randomSecret());
 //                    sendActivationEmail(user.id, user.name, user.email);
                     tx.commit();
                     return user;
