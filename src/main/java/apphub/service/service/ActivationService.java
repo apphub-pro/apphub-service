@@ -16,26 +16,22 @@
 
 package apphub.service.service;
 
-import apphub.service.api.ApplicationUser;
-import apphub.service.api.IApplicationUsersService;
-import apphub.staff.repository.ApplicationUserRepository;
-
-import javax.ws.rs.HeaderParam;
+import apphub.service.api.IActivationService;
+import apphub.staff.repository.UserRepository;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class ApplicationUsersService implements IApplicationUsersService {
-    protected final ApplicationUserRepository applicationUserRepository;
+public class ActivationService implements IActivationService {
+    protected final UserRepository userRepository;
 
-    public ApplicationUsersService(ApplicationUserRepository applicationUserRepository) {
-        this.applicationUserRepository = applicationUserRepository;
+    public ActivationService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public ApplicationUser[] get(@HeaderParam("Secret") String secret,
-                                 @HeaderParam("Application") String application) {
-        return new ApplicationUser[0];
+    public String get(String key) {
+        return "ACTIVATION IS SUCCESSFUL";
     }
 }

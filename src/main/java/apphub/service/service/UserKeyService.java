@@ -16,12 +16,10 @@
 
 package apphub.service.service;
 
-import apphub.service.api.IUserSecretService;
-import apphub.service.api.UserSecret;
+import apphub.service.api.IUserKeyService;
+import apphub.service.api.UserKey;
 import apphub.staff.database.Database;
-import apphub.staff.database.Transaction;
-import apphub.staff.model.tables.TUser;
-import apphub.staff.repository.UserRepository;
+import apphub.staff.repository.UserKeyRepository;
 
 import javax.ws.rs.HeaderParam;
 import java.util.List;
@@ -30,37 +28,37 @@ import java.util.List;
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class UserSecretService implements IUserSecretService {
+public class UserKeyService implements IUserKeyService {
     protected final Database database;
-    protected final UserRepository userRepository;
+    protected final UserKeyRepository userKeyRepository;
 
-    public UserSecretService(Database database, UserRepository userRepository) {
+    public UserKeyService(Database database, UserKeyRepository userKeyRepository) {
         this.database = database;
-        this.userRepository = userRepository;
+        this.userKeyRepository = userKeyRepository;
     }
 
     @Override
-    public UserSecret get(String secret, String user, String id) {
+    public UserKey get(String secret, String user, String id) {
         return null;
     }
 
     @Override
-    public List<UserSecret> list(String secret, String user) {
+    public List<UserKey> list(String secret, String user) {
         return null;
     }
 
     @Override
-    public UserSecret put(String secret, UserSecret userSecret) {
+    public UserKey put(String secret, UserKey userKey) {
         return null;
     }
 
     @Override
-    public UserSecret post(String secret, UserSecret userSecret) {
+    public UserKey post(String secret, UserKey userKey) {
         return null;
     }
 
     @Override
-    public UserSecret delete(String secret, String user, String id) {
+    public UserKey delete(String secret, String user, String id) {
         return null;
     }
 }

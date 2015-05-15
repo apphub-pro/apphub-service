@@ -16,51 +16,42 @@
 
 package apphub.service.service;
 
-import apphub.service.api.IUserSecretService;
-import apphub.service.api.UserSecret;
+import apphub.service.api.ILoginService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
-import apphub.staff.model.tables.TUser;
 import apphub.staff.repository.UserRepository;
+import apphub.util.StringUtil;
 
-import javax.ws.rs.HeaderParam;
-import java.util.List;
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class UserSecretService implements IUserSecretService {
+public class LoginService implements ILoginService {
     protected final Database database;
     protected final UserRepository userRepository;
 
-    public UserSecretService(Database database, UserRepository userRepository) {
+    public LoginService(Database database, UserRepository userRepository) {
         this.database = database;
         this.userRepository = userRepository;
     }
 
     @Override
-    public UserSecret get(String secret, String user, String id) {
-        return null;
+    public String get(String id, String password) {
+        try (Transaction tx = new Transaction(database)) {
+            if (Arrays.equals(StringUtil.toBytes(password), userRepository.getPassword(tx, id))) {
+                return userRepository.getSecret(tx, id);
+            } else {
+                throw new ServerErrorException(String.format("Invalid credentials for user '%s'", id), Response.Status.NOT_FOUND);
+            }
+        }
     }
 
     @Override
-    public List<UserSecret> list(String secret, String user) {
-        return null;
-    }
-
-    @Override
-    public UserSecret put(String secret, UserSecret userSecret) {
-        return null;
-    }
-
-    @Override
-    public UserSecret post(String secret, UserSecret userSecret) {
-        return null;
-    }
-
-    @Override
-    public UserSecret delete(String secret, String user, String id) {
+    public String post(String id, String password) {
         return null;
     }
 }

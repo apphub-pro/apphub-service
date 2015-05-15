@@ -16,36 +16,43 @@
 
 package apphub.service.service;
 
-import apphub.service.api.Build;
-import apphub.service.api.IBuildService;
+import apphub.service.api.EnvironmentApplication;
+import apphub.service.api.IEnvironmentApplicationService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
-import apphub.staff.repository.BuildRepository;
+import apphub.staff.repository.EnvironmentApplicationRepository;
+import apphub.staff.repository.EnvironmentRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class BuildService implements IBuildService {
+public class EnvironmentApplicationService implements IEnvironmentApplicationService {
     protected final Database database;
-    protected final BuildRepository buildRepository;
+    protected final EnvironmentRepository environmentRepository;
     protected final EnvironmentUserRepository environmentUserRepository;
+    protected final EnvironmentApplicationRepository environmentApplicationRepository;
 
-    public BuildService(Database database, BuildRepository buildRepository, EnvironmentUserRepository environmentUserRepository) {
+    public EnvironmentApplicationService(Database database,
+                                         EnvironmentRepository environmentRepository,
+                                         EnvironmentUserRepository environmentUserRepository,
+                                         EnvironmentApplicationRepository environmentApplicationRepository) {
         this.database = database;
-        this.buildRepository = buildRepository;
+        this.environmentRepository = environmentRepository;
         this.environmentUserRepository = environmentUserRepository;
+        this.environmentApplicationRepository = environmentApplicationRepository;
     }
 
     @Override
-    public Build get(String secret, String application, String version, String environment) {
+    public EnvironmentApplication get(String secret, String environment, String application) {
         try (Transaction tx = new Transaction(database, secret)) {
             if (environmentUserRepository.exists(tx, environment, tx.getUser())) {
-                return buildRepository.get(tx, application, version, environment);
+                return environmentApplicationRepository.get(tx, environment, application);
             } else {
                 throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", environment, tx.getUser()), Response.Status.NOT_FOUND);
             }
@@ -53,17 +60,22 @@ public class BuildService implements IBuildService {
     }
 
     @Override
-    public Build put(String secret, Build build) {
+    public List<EnvironmentApplication> list(String secret, String environment) {
         return null;
     }
 
     @Override
-    public Build post(String secret, Build build) {
+    public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
         return null;
     }
 
     @Override
-    public Build delete(String secret, String application, String version, String environment) {
+    public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
+        return null;
+    }
+
+    @Override
+    public EnvironmentApplication delete(String secret, String environment, String application) {
         return null;
     }
 }

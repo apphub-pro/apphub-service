@@ -18,17 +18,43 @@ package apphub.service.service;
 
 import apphub.service.api.Environment;
 import apphub.service.api.IEnvironmentService;
+import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
+import apphub.staff.repository.EnvironmentRepository;
+import apphub.staff.repository.EnvironmentUserRepository;
+
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class EnvironmentService implements IEnvironmentService {
-    public EnvironmentService() {
+    protected final Database database;
+    protected final EnvironmentRepository environmentRepository;
+    protected final EnvironmentUserRepository environmentUserRepository;
+
+    public EnvironmentService(Database database, EnvironmentRepository environmentRepository, EnvironmentUserRepository environmentUserRepository) {
+        this.database = database;
+        this.environmentRepository = environmentRepository;
+        this.environmentUserRepository = environmentUserRepository;
     }
 
     @Override
     public Environment get(String secret, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            if (environmentUserRepository.exists(tx, id, tx.getUser())) {
+                return environmentRepository.get(tx, id);
+            } else {
+                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", id, tx.getUser()), Response.Status.NOT_FOUND);
+            }
+        }
+    }
+
+    @Override
+    public List<Environment> list(String secret) {
         return null;
     }
 
@@ -39,6 +65,11 @@ public class EnvironmentService implements IEnvironmentService {
 
     @Override
     public Environment post(String secret, Environment environment) {
+        return null;
+    }
+
+    @Override
+    public Environment delete(String secret, String id) {
         return null;
     }
 }

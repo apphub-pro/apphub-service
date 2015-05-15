@@ -18,7 +18,6 @@ package apphub.service;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -35,18 +34,21 @@ public class ServiceApplication extends Application {
 
     @Override
     public Set<Object> getSingletons() {
-        LinkedHashSet<Object> singletons = new LinkedHashSet<>(12);
+        LinkedHashSet<Object> singletons = new LinkedHashSet<>(16);
+        singletons.add(context.getActivationService());
         singletons.add(context.getApplicationService());
-        singletons.add(context.getApplicationsService());
         singletons.add(context.getApplicationUserService());
-        singletons.add(context.getApplicationUsersService());
         singletons.add(context.getBuildService());
+        singletons.add(context.getEnvironmentApplicationService());
         singletons.add(context.getEnvironmentService());
-        singletons.add(context.getEnvironmentsService());
-        singletons.add(context.getUserActivationService());
+        singletons.add(context.getEnvironmentUserSecretService());
+        singletons.add(context.getEnvironmentUserService());
+        singletons.add(context.getLoginService());
+        singletons.add(context.getUserKeyService());
         singletons.add(context.getUserSecretService());
         singletons.add(context.getUserService());
         singletons.add(context.getVersionService());
+        singletons.add(context.getLdapService());
         singletons.add(context.getTestService());
         return singletons;
     }

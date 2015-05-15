@@ -18,6 +18,8 @@ package apphub.service.service;
 
 import apphub.service.api.IVersionService;
 import apphub.service.api.Version;
+import apphub.staff.database.Database;
+import apphub.staff.repository.VersionRepository;
 
 import javax.ws.rs.HeaderParam;
 
@@ -26,21 +28,26 @@ import javax.ws.rs.HeaderParam;
  * @since 1.0
  */
 public class VersionService implements IVersionService {
-    public VersionService() {
+    protected final Database database;
+    protected final VersionRepository versionRepository;
+
+    public VersionService(Database database, VersionRepository versionRepository) {
+        this.database = database;
+        this.versionRepository = versionRepository;
     }
 
     @Override
-    public Version get(@HeaderParam("Secret") String secret, @HeaderParam("Id") String id) {
+    public Version get(String secret, String id) {
         return null;
     }
 
     @Override
-    public Version put(@HeaderParam("Secret") String secret, Version version) {
+    public Version put(String secret, Version version) {
         return null;
     }
 
     @Override
-    public Version post(@HeaderParam("Secret") String secret, Version version) {
+    public Version post(String secret, Version version) {
         return null;
     }
 }

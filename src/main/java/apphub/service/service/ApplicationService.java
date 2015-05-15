@@ -18,21 +18,43 @@ package apphub.service.service;
 
 import apphub.service.api.Application;
 import apphub.service.api.IApplicationService;
+import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationRepository;
+import apphub.staff.repository.ApplicationUserRepository;
+
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class ApplicationService implements IApplicationService {
+    protected final Database database;
     protected final ApplicationRepository applicationRepository;
+    protected final ApplicationUserRepository applicationUserRepository;
 
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(Database database, ApplicationRepository applicationRepository, ApplicationUserRepository applicationUserRepository) {
+        this.database = database;
         this.applicationRepository = applicationRepository;
+        this.applicationUserRepository = applicationUserRepository;
     }
 
     @Override
     public Application get(String secret, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            if (applicationUserRepository.exists(tx, id, tx.getUser())) {
+                return applicationRepository.get(tx, id);
+            } else {
+                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' is not found", id, tx.getUser()), Response.Status.NOT_FOUND);
+            }
+        }
+    }
+
+    @Override
+    public List<Application> list(String secret) {
         return null;
     }
 

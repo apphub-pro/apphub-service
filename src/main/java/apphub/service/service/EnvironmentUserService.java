@@ -16,36 +16,34 @@
 
 package apphub.service.service;
 
-import apphub.service.api.Build;
-import apphub.service.api.IBuildService;
+import apphub.service.api.EnvironmentUser;
+import apphub.service.api.IEnvironmentUserService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
-import apphub.staff.repository.BuildRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class BuildService implements IBuildService {
+public class EnvironmentUserService implements IEnvironmentUserService {
     protected final Database database;
-    protected final BuildRepository buildRepository;
     protected final EnvironmentUserRepository environmentUserRepository;
 
-    public BuildService(Database database, BuildRepository buildRepository, EnvironmentUserRepository environmentUserRepository) {
+    public EnvironmentUserService(Database database, EnvironmentUserRepository environmentUserRepository) {
         this.database = database;
-        this.buildRepository = buildRepository;
         this.environmentUserRepository = environmentUserRepository;
     }
 
     @Override
-    public Build get(String secret, String application, String version, String environment) {
+    public EnvironmentUser get(String secret, String environment, String user) {
         try (Transaction tx = new Transaction(database, secret)) {
             if (environmentUserRepository.exists(tx, environment, tx.getUser())) {
-                return buildRepository.get(tx, application, version, environment);
+                return environmentUserRepository.get(tx, environment, user);
             } else {
                 throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", environment, tx.getUser()), Response.Status.NOT_FOUND);
             }
@@ -53,17 +51,22 @@ public class BuildService implements IBuildService {
     }
 
     @Override
-    public Build put(String secret, Build build) {
+    public List<EnvironmentUser> list(String secret, String environment) {
         return null;
     }
 
     @Override
-    public Build post(String secret, Build build) {
+    public EnvironmentUser put(String secret, EnvironmentUser environmentUser) {
         return null;
     }
 
     @Override
-    public Build delete(String secret, String application, String version, String environment) {
+    public EnvironmentUser post(String secret, EnvironmentUser environmentUser) {
+        return null;
+    }
+
+    @Override
+    public EnvironmentUser delete(String secret, String environment, String user) {
         return null;
     }
 }

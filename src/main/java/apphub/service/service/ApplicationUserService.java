@@ -18,35 +18,48 @@ package apphub.service.service;
 
 import apphub.service.api.ApplicationUser;
 import apphub.service.api.IApplicationUserService;
+import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationUserRepository;
 
-import javax.ws.rs.HeaderParam;
+import java.util.List;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class ApplicationUserService implements IApplicationUserService {
+    protected final Database database;
     protected final ApplicationUserRepository applicationUserRepository;
 
-    public ApplicationUserService(ApplicationUserRepository applicationUserRepository) {
+    public ApplicationUserService(Database database, ApplicationUserRepository applicationUserRepository) {
+        this.database = database;
         this.applicationUserRepository = applicationUserRepository;
     }
 
     @Override
-    public ApplicationUser get(@HeaderParam("Secret") String secret,
-                               @HeaderParam("Application") String application,
-                               @HeaderParam("User") String user) {
+    public ApplicationUser get(String secret, String application, String user) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            if (applicationUserRepository.exists(tx, application, tx.getUser())) {
+                return applicationUserRepository.get(tx, application, user);
+            } else {
+                throw new IllegalArgumentException(String.format("Application user with application '%s' and user '%s' is not found", application, tx.getUser()));
+            }
+        }
+    }
+
+    @Override
+    public List<ApplicationUser> list(String secret, String application) {
         return null;
     }
 
     @Override
-    public ApplicationUser put(@HeaderParam("Secret") String secret, ApplicationUser applicationUser) {
+    public ApplicationUser put(String secret, ApplicationUser applicationUser) {
         return null;
     }
 
     @Override
-    public ApplicationUser post(@HeaderParam("Secret") String secret, ApplicationUser applicationUser) {
+    public ApplicationUser post(String secret, ApplicationUser applicationUser) {
         return null;
     }
 }

@@ -16,81 +16,97 @@
 
 package apphub.service;
 
+import apphub.Config;
+import apphub.service.ldap.LdapService;
+import apphub.service.service.ActivationService;
 import apphub.service.service.ApplicationService;
 import apphub.service.service.ApplicationUserService;
-import apphub.service.service.ApplicationUsersService;
-import apphub.service.service.ApplicationsService;
 import apphub.service.service.BuildService;
+import apphub.service.service.EnvironmentApplicationService;
 import apphub.service.service.EnvironmentService;
-import apphub.service.service.EnvironmentsService;
-import apphub.service.ldap.LdapService;
+import apphub.service.service.EnvironmentUserSecretService;
+import apphub.service.service.EnvironmentUserService;
+import apphub.service.service.LoginService;
 import apphub.service.service.TestService;
-import apphub.service.service.UserActivationService;
+import apphub.service.service.UserKeyService;
 import apphub.service.service.UserSecretService;
 import apphub.service.service.UserService;
 import apphub.service.service.VersionService;
 import apphub.staff.StaffContext;
-import apphub.utility.PropertyUtil;
-
-import java.io.File;
+import apphub.util.PropertyUtil;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class ServiceContext extends StaffContext {
+    protected final Config config = Config.get();
     protected final String tempDirectory = String.format("%s/apphub/service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
-    protected final ApplicationService applicationService = new ApplicationService(applicationRepository);
-    protected final ApplicationsService applicationsService = new ApplicationsService(applicationRepository);
-    protected final ApplicationUserService applicationUserService = new ApplicationUserService(applicationUserRepository);
-    protected final ApplicationUsersService applicationUsersService = new ApplicationUsersService(applicationUserRepository);
-    protected final BuildService buildService = new BuildService();
-    protected final EnvironmentService environmentService = new EnvironmentService();
-    protected final EnvironmentsService environmentsService = new EnvironmentsService();
-    protected final UserActivationService userActivationService = new UserActivationService(userRepository);
+    protected final ActivationService activationService = new ActivationService(userRepository);
+    protected final ApplicationService applicationService = new ApplicationService(database, applicationRepository, applicationUserRepository);
+    protected final ApplicationUserService applicationUserService = new ApplicationUserService(database, applicationUserRepository);
+    protected final BuildService buildService = new BuildService(database, buildRepository, environmentUserRepository);
+    protected final EnvironmentApplicationService environmentApplicationService = new EnvironmentApplicationService(database, environmentRepository, environmentUserRepository, environmentApplicationRepository);
+    protected final EnvironmentService environmentService = new EnvironmentService(database, environmentRepository, environmentUserRepository);
+    protected final EnvironmentUserSecretService environmentUserSecretService = new EnvironmentUserSecretService(database, environmentUserRepository, environmentUserSecretRepository);
+    protected final EnvironmentUserService environmentUserService = new EnvironmentUserService(database, environmentUserRepository);
+    protected final LoginService loginService = new LoginService(database, userRepository);
+    protected final UserKeyService userKeyService = new UserKeyService(database, userKeyRepository);
     protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
     protected final UserService userService = new UserService(database, userRepository);
-    protected final VersionService versionService = new VersionService();
+    protected final VersionService versionService = new VersionService(database, versionRepository);
     protected final LdapService ldapService = new LdapService(database, userRepository);
     protected final TestService testService = new TestService();
 
     public ServiceContext() {
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
     public String getTempDirectory() {
         return tempDirectory;
+    }
+
+    public ActivationService getActivationService() {
+        return activationService;
     }
 
     public ApplicationService getApplicationService() {
         return applicationService;
     }
 
-    public ApplicationsService getApplicationsService() {
-        return applicationsService;
-    }
-
     public ApplicationUserService getApplicationUserService() {
         return applicationUserService;
-    }
-
-    public ApplicationUsersService getApplicationUsersService() {
-        return applicationUsersService;
     }
 
     public BuildService getBuildService() {
         return buildService;
     }
 
+    public EnvironmentApplicationService getEnvironmentApplicationService() {
+        return environmentApplicationService;
+    }
+
     public EnvironmentService getEnvironmentService() {
         return environmentService;
     }
 
-    public EnvironmentsService getEnvironmentsService() {
-        return environmentsService;
+    public EnvironmentUserSecretService getEnvironmentUserSecretService() {
+        return environmentUserSecretService;
     }
 
-    public UserActivationService getUserActivationService() {
-        return userActivationService;
+    public EnvironmentUserService getEnvironmentUserService() {
+        return environmentUserService;
+    }
+
+    public LoginService getLoginService() {
+        return loginService;
+    }
+
+    public UserKeyService getUserKeyService() {
+        return userKeyService;
     }
 
     public UserSecretService getUserSecretService() {
