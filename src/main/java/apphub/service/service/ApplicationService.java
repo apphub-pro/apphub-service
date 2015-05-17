@@ -17,6 +17,7 @@
 package apphub.service.service;
 
 import apphub.service.api.Application;
+import apphub.service.api.ApplicationUser;
 import apphub.service.api.IApplicationService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
@@ -45,11 +46,8 @@ public class ApplicationService implements IApplicationService {
     @Override
     public Application get(String secret, String id) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (applicationUserRepository.exists(tx, id, tx.getUser())) {
-                return applicationRepository.get(tx, id);
-            } else {
-                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' is not found", id, tx.getUser()), Response.Status.NOT_FOUND);
-            }
+            applicationUserRepository.check(tx, id, tx.getUser());
+            return applicationRepository.get(tx, id);
         }
     }
 
@@ -60,11 +58,27 @@ public class ApplicationService implements IApplicationService {
 
     @Override
     public Application put(String secret, Application application) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            Application r = applicationRepository.insert(tx, application);
+            applicationUserRepository.insert(tx, new ApplicationUser(application.id,
+                                                                     tx.getUser(),
+                                                                     tx.getTime(),
+                                                                     tx.getUser(),
+                                                                     tx.getTime(),
+                                                                     tx.getUser(),
+                                                                     true));
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Application post(String secret, Application application) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            applicationUserRepository.check(tx, application.id, tx.getUser());
+            Application r = applicationRepository.update(tx, application);
+            tx.commit();
+            return r;
+        }
     }
 }

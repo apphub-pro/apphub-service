@@ -22,6 +22,8 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationUserRepository;
 
+import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -40,11 +42,8 @@ public class ApplicationUserService implements IApplicationUserService {
     @Override
     public ApplicationUser get(String secret, String application, String user) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (applicationUserRepository.exists(tx, application, tx.getUser())) {
-                return applicationUserRepository.get(tx, application, user);
-            } else {
-                throw new IllegalArgumentException(String.format("Application user with application '%s' and user '%s' is not found", application, tx.getUser()));
-            }
+            applicationUserRepository.check(tx, application, tx.getUser());
+            return applicationUserRepository.get(tx, application, user);
         }
     }
 
@@ -55,11 +54,29 @@ public class ApplicationUserService implements IApplicationUserService {
 
     @Override
     public ApplicationUser put(String secret, ApplicationUser applicationUser) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
+            if (user.admin) {
+                ApplicationUser r = applicationUserRepository.insert(tx, applicationUser);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 
     @Override
     public ApplicationUser post(String secret, ApplicationUser applicationUser) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
+            if (user.admin) {
+                ApplicationUser r = applicationUserRepository.update(tx, applicationUser);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 }

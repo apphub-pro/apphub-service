@@ -19,6 +19,8 @@ package apphub.service.service;
 import apphub.service.api.IVersionService;
 import apphub.service.api.Version;
 import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
+import apphub.staff.repository.ApplicationUserRepository;
 import apphub.staff.repository.VersionRepository;
 
 import javax.ws.rs.HeaderParam;
@@ -30,10 +32,12 @@ import javax.ws.rs.HeaderParam;
 public class VersionService implements IVersionService {
     protected final Database database;
     protected final VersionRepository versionRepository;
+    protected final ApplicationUserRepository applicationUserRepository;
 
-    public VersionService(Database database, VersionRepository versionRepository) {
+    public VersionService(Database database, VersionRepository versionRepository, ApplicationUserRepository applicationUserRepository) {
         this.database = database;
         this.versionRepository = versionRepository;
+        this.applicationUserRepository = applicationUserRepository;
     }
 
     @Override
@@ -43,11 +47,21 @@ public class VersionService implements IVersionService {
 
     @Override
     public Version put(String secret, Version version) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            applicationUserRepository.check(tx, version.application, tx.getUser());
+            Version r = versionRepository.insert(tx, version);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Version post(String secret, Version version) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            applicationUserRepository.check(tx, version.application, tx.getUser());
+            Version r = versionRepository.update(tx, version);
+            tx.commit();
+            return r;
+        }
     }
 }

@@ -44,26 +44,39 @@ public class BuildService implements IBuildService {
     @Override
     public Build get(String secret, String application, String version, String environment) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (environmentUserRepository.exists(tx, environment, tx.getUser())) {
-                return buildRepository.get(tx, application, version, environment);
-            } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", environment, tx.getUser()), Response.Status.NOT_FOUND);
-            }
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return buildRepository.get(tx, application, version, environment);
         }
     }
 
     @Override
     public Build put(String secret, Build build) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, build.environment, tx.getUser());
+            Build r = buildRepository.insert(tx, build);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Build post(String secret, Build build) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, build.environment, tx.getUser());
+            Build r = buildRepository.update(tx, build);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Build delete(String secret, String application, String version, String environment) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            Build r = buildRepository.get(tx, application, version, environment);
+            buildRepository.delete(tx, application, version, environment);
+            tx.commit();
+            return r;
+        }
     }
 }

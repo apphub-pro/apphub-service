@@ -54,7 +54,7 @@ public class ServiceContext extends StaffContext {
     protected final UserKeyService userKeyService = new UserKeyService(database, userKeyRepository);
     protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
     protected final UserService userService = new UserService(database, userRepository);
-    protected final VersionService versionService = new VersionService(database, versionRepository);
+    protected final VersionService versionService = new VersionService(database, versionRepository, applicationUserRepository);
     protected final LdapService ldapService = new LdapService(database, userRepository);
     protected final TestService testService = new TestService();
 

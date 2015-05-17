@@ -17,12 +17,14 @@
 package apphub.service.service;
 
 import apphub.service.api.Environment;
+import apphub.service.api.EnvironmentUser;
 import apphub.service.api.IEnvironmentService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -45,11 +47,8 @@ public class EnvironmentService implements IEnvironmentService {
     @Override
     public Environment get(String secret, String id) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (environmentUserRepository.exists(tx, id, tx.getUser())) {
-                return environmentRepository.get(tx, id);
-            } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", id, tx.getUser()), Response.Status.NOT_FOUND);
-            }
+            environmentUserRepository.check(tx, id, tx.getUser());
+            return environmentRepository.get(tx, id);
         }
     }
 
@@ -59,17 +58,43 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment put(String secret, Environment environment) {
-        return null;
+    public Environment put(String secret, String environmentSecret, Environment environment) {
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            Environment r = environmentRepository.insert(tx, environment, environmentSecret);
+            environmentUserRepository.insert(tx, new EnvironmentUser(environment.id,
+                                                                     tx.getUser(),
+                                                                     tx.getTime(),
+                                                                     tx.getUser(),
+                                                                     tx.getTime(),
+                                                                     tx.getUser(),
+                                                                     true));
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Environment post(String secret, Environment environment) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environment.id, tx.getUser());
+            Environment r = environmentRepository.update(tx, environment);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public Environment delete(String secret, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            EnvironmentUser user = environmentUserRepository.get(tx, id, tx.getUser());
+            if (user.admin) {
+                Environment r = environmentRepository.get(tx, id);
+                environmentRepository.delete(tx, id);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", id, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 }
