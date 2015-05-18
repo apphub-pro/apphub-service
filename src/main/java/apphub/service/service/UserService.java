@@ -16,16 +16,17 @@
 
 package apphub.service.service;
 
+import apphub.Config;
 import apphub.service.api.IUserService;
 import apphub.service.api.User;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
-import apphub.staff.util.SecretUtil;
-import apphub.util.IOUtil;
-import apphub.util.PropertyUtil;
-import apphub.util.StringUtil;
+import apphub.staff.util.secret.SecretUtil;
 import apphub.util.Util;
+import apphub.util.io.IOUtil;
+import apphub.util.property.PropertyUtil;
+import apphub.util.string.StringUtil;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -83,14 +84,14 @@ public class UserService implements IUserService {
     }
 
     private void sendActivationEmail(String id, String name, String email, String code) {
-        Session session = Session.getDefaultInstance(PropertyUtil.toProperties(new String[][]{{"mail.smtp.host", "localhost"}}));
+        Session session = Session.getDefaultInstance(PropertyUtil.toProperties(new String[][] {{"mail.smtp.host", "localhost"}}));
         MimeMessage message = new MimeMessage(session);
         try {
             message.setFrom(new InternetAddress("staff@apphub.pro"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("AppHub user activation notification", Util.CHARSET.name());
             message.setText(String.format(activationEmail, name, id,
-                            String.format("https://service.dev.apphub.pro/service/user/activation/%s", code)), Util.CHARSET.name());
+                            String.format("https://service.%s/service/activation/%s", Config.get().getDomain(), code)), Util.CHARSET.name());
             Transport.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException(e);

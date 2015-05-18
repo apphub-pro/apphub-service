@@ -20,7 +20,7 @@ import apphub.service.api.ILoginService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
-import apphub.util.StringUtil;
+import apphub.util.string.StringUtil;
 
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;

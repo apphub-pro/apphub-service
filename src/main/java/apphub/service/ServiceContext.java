@@ -33,7 +33,7 @@ import apphub.service.service.UserSecretService;
 import apphub.service.service.UserService;
 import apphub.service.service.VersionService;
 import apphub.staff.StaffContext;
-import apphub.util.PropertyUtil;
+import apphub.util.property.PropertyUtil;
 
 /**
  * @author Dmitry Kotlyarov
