@@ -19,6 +19,7 @@ package apphub.service.service;
 import apphub.service.api.EnvironmentUserSecret;
 import apphub.service.api.IEnvironmentUserSecretService;
 import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentUserRepository;
 import apphub.staff.repository.EnvironmentUserSecretRepository;
 
@@ -41,7 +42,10 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
 
     @Override
     public EnvironmentUserSecret get(String secret, String environment, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentUserSecretRepository.get(tx, environment, tx.getUser(), id);
+        }
     }
 
     @Override
@@ -51,16 +55,26 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
 
     @Override
     public EnvironmentUserSecret put(String secret, EnvironmentUserSecret environmentUserSecret) {
-        return null;
-    }
-
-    @Override
-    public EnvironmentUserSecret post(String secret, EnvironmentUserSecret environmentUserSecret) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environmentUserSecret.environment, tx.getUser());
+            EnvironmentUserSecret r = environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment,
+                                                                                                           tx.getUser(),
+                                                                                                           environmentUserSecret.id,
+                                                                                                           environmentUserSecret.createTime,
+                                                                                                           environmentUserSecret.secret));
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public EnvironmentUserSecret delete(String secret, String environment, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            EnvironmentUserSecret r = environmentUserSecretRepository.get(tx, environment, tx.getUser(), id);
+            environmentUserSecretRepository.delete(tx, environment, tx.getUser(), id);
+            tx.commit();
+            return r;
+        }
     }
 }

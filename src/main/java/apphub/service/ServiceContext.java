@@ -46,7 +46,7 @@ public class ServiceContext extends StaffContext {
     protected final ApplicationService applicationService = new ApplicationService(database, applicationRepository, applicationUserRepository);
     protected final ApplicationUserService applicationUserService = new ApplicationUserService(database, applicationUserRepository);
     protected final BuildService buildService = new BuildService(database, buildRepository, environmentUserRepository);
-    protected final EnvironmentApplicationService environmentApplicationService = new EnvironmentApplicationService(database, environmentRepository, environmentUserRepository, environmentApplicationRepository);
+    protected final EnvironmentApplicationService environmentApplicationService = new EnvironmentApplicationService(database, environmentUserRepository, environmentApplicationRepository);
     protected final EnvironmentService environmentService = new EnvironmentService(database, environmentRepository, environmentUserRepository);
     protected final EnvironmentUserSecretService environmentUserSecretService = new EnvironmentUserSecretService(database, environmentUserRepository, environmentUserSecretRepository);
     protected final EnvironmentUserService environmentUserService = new EnvironmentUserService(database, environmentUserRepository);

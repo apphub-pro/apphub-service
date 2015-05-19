@@ -55,11 +55,6 @@ public class UserSecretService implements IUserSecretService {
     }
 
     @Override
-    public UserSecret post(String secret, UserSecret userSecret) {
-        return null;
-    }
-
-    @Override
     public UserSecret delete(String secret, String user, String id) {
         return null;
     }

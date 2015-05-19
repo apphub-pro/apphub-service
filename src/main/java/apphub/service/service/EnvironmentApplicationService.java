@@ -34,16 +34,13 @@ import java.util.List;
  */
 public class EnvironmentApplicationService implements IEnvironmentApplicationService {
     protected final Database database;
-    protected final EnvironmentRepository environmentRepository;
     protected final EnvironmentUserRepository environmentUserRepository;
     protected final EnvironmentApplicationRepository environmentApplicationRepository;
 
     public EnvironmentApplicationService(Database database,
-                                         EnvironmentRepository environmentRepository,
                                          EnvironmentUserRepository environmentUserRepository,
                                          EnvironmentApplicationRepository environmentApplicationRepository) {
         this.database = database;
-        this.environmentRepository = environmentRepository;
         this.environmentUserRepository = environmentUserRepository;
         this.environmentApplicationRepository = environmentApplicationRepository;
     }
@@ -51,11 +48,8 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     @Override
     public EnvironmentApplication get(String secret, String environment, String application) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (environmentUserRepository.exists(tx, environment, tx.getUser())) {
-                return environmentApplicationRepository.get(tx, environment, application);
-            } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", environment, tx.getUser()), Response.Status.NOT_FOUND);
-            }
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentApplicationRepository.get(tx, environment, application);
         }
     }
 
@@ -66,16 +60,32 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
 
     @Override
     public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
+            EnvironmentApplication r = environmentApplicationRepository.insert(tx, environmentApplication);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
+            EnvironmentApplication r = environmentApplicationRepository.update(tx, environmentApplication);
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public EnvironmentApplication delete(String secret, String environment, String application) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            EnvironmentApplication r = environmentApplicationRepository.get(tx, environment, application);
+            environmentApplicationRepository.delete(tx, environment, application);
+            tx.commit();
+            return r;
+        }
     }
 }

@@ -17,6 +17,7 @@
 package apphub.service.service;
 
 import apphub.service.api.IActivationService;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
 
 /**
@@ -31,7 +32,7 @@ public class ActivationService implements IActivationService {
     }
 
     @Override
-    public String get(String key) {
+    public String get(String code) {
         return "ACTIVATION IS SUCCESSFUL";
     }
 }

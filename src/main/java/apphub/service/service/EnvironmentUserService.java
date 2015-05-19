@@ -42,11 +42,8 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     @Override
     public EnvironmentUser get(String secret, String environment, String user) {
         try (Transaction tx = new Transaction(database, secret)) {
-            if (environmentUserRepository.exists(tx, environment, tx.getUser())) {
-                return environmentUserRepository.get(tx, environment, user);
-            } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' is not found", environment, tx.getUser()), Response.Status.NOT_FOUND);
-            }
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentUserRepository.get(tx, environment, user);
         }
     }
 
@@ -57,16 +54,44 @@ public class EnvironmentUserService implements IEnvironmentUserService {
 
     @Override
     public EnvironmentUser put(String secret, EnvironmentUser environmentUser) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
+            if (user.admin) {
+                EnvironmentUser r = environmentUserRepository.insert(tx, environmentUser);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 
     @Override
     public EnvironmentUser post(String secret, EnvironmentUser environmentUser) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
+            if (user.admin) {
+                EnvironmentUser r = environmentUserRepository.update(tx, environmentUser);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 
     @Override
     public EnvironmentUser delete(String secret, String environment, String user) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            EnvironmentUser user1 = environmentUserRepository.get(tx, environment, tx.getUser());
+            if (user1.admin) {
+                EnvironmentUser r = environmentUserRepository.get(tx, environment, user);
+                environmentUserRepository.delete(tx, environment, user);
+                tx.commit();
+                return r;
+            } else {
+                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environment, tx.getUser()), Response.Status.FORBIDDEN);
+            }
+        }
     }
 }

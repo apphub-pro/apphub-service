@@ -53,11 +53,6 @@ public class UserKeyService implements IUserKeyService {
     }
 
     @Override
-    public UserKey post(String secret, UserKey userKey) {
-        return null;
-    }
-
-    @Override
     public UserKey delete(String secret, String user, String id) {
         return null;
     }
