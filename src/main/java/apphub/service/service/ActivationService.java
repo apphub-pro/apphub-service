@@ -17,22 +17,34 @@
 package apphub.service.service;
 
 import apphub.service.api.IActivationService;
+import apphub.service.api.User;
+import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
+import apphub.staff.util.secret.SecretUtil;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
 public class ActivationService implements IActivationService {
+    protected final Database database;
     protected final UserRepository userRepository;
 
-    public ActivationService(UserRepository userRepository) {
+    public ActivationService(Database database, UserRepository userRepository) {
+        this.database = database;
         this.userRepository = userRepository;
     }
 
     @Override
     public String get(String code) {
-        return "ACTIVATION IS SUCCESSFUL";
+        try (Transaction tx = new Transaction(database, false, null)) {
+            User user = userRepository.getByCode(tx, code);
+            if (userRepository.findSecret(tx, user.id) == null) {
+                userRepository.updateSecret(tx, user.id, SecretUtil.randomSecret());
+                tx.commit();
+            }
+            return "ACTIVATION IS SUCCESSFUL";
+        }
     }
 }

@@ -53,7 +53,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User get(@HeaderParam("secret") String secret) {
+    public User get(String secret) {
         try (Transaction tx = new Transaction(database, secret)) {
             return userRepository.get(tx, tx.getUser());
         }
@@ -70,10 +70,10 @@ public class UserService implements IUserService {
                     tx.commit();
                     return user;
                 } else {
-                    throw new ServerErrorException(String.format("User with email '%s' is found", user.email), Response.Status.FOUND);
+                    throw new ServerErrorException(String.format("User with email '%s' is found", user.email), Response.Status.FORBIDDEN);
                 }
             } else {
-                throw new ServerErrorException(String.format("User with id '%s' is found", user.id), Response.Status.FOUND);
+                throw new ServerErrorException(String.format("User with id '%s' is found", user.id), Response.Status.FORBIDDEN);
             }
         }
     }

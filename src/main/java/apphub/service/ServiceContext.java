@@ -42,7 +42,7 @@ import apphub.util.property.PropertyUtil;
 public class ServiceContext extends StaffContext {
     protected final Config config = Config.get();
     protected final String tempDirectory = String.format("%s/apphub/service", PropertyUtil.getSystemProperty("java.io.tmpdir"));
-    protected final ActivationService activationService = new ActivationService(userRepository);
+    protected final ActivationService activationService = new ActivationService(database, userRepository);
     protected final ApplicationService applicationService = new ApplicationService(database, applicationRepository, applicationUserRepository);
     protected final ApplicationUserService applicationUserService = new ApplicationUserService(database, applicationUserRepository);
     protected final BuildService buildService = new BuildService(database, buildRepository, environmentUserRepository);
@@ -52,7 +52,7 @@ public class ServiceContext extends StaffContext {
     protected final EnvironmentUserService environmentUserService = new EnvironmentUserService(database, environmentUserRepository);
     protected final LoginService loginService = new LoginService(database, userRepository);
     protected final UserKeyService userKeyService = new UserKeyService(database, userKeyRepository);
-    protected final UserSecretService userSecretService = new UserSecretService(database, userRepository);
+    protected final UserSecretService userSecretService = new UserSecretService(database, userSecretRepository);
     protected final UserService userService = new UserService(database, userRepository);
     protected final VersionService versionService = new VersionService(database, versionRepository, applicationUserRepository);
     protected final LdapService ldapService = new LdapService(database, userRepository);

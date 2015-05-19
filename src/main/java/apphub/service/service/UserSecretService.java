@@ -22,6 +22,7 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.model.tables.TUser;
 import apphub.staff.repository.UserRepository;
+import apphub.staff.repository.UserSecretRepository;
 
 import javax.ws.rs.HeaderParam;
 import java.util.List;
@@ -32,16 +33,18 @@ import java.util.List;
  */
 public class UserSecretService implements IUserSecretService {
     protected final Database database;
-    protected final UserRepository userRepository;
+    protected final UserSecretRepository userSecretRepository;
 
-    public UserSecretService(Database database, UserRepository userRepository) {
+    public UserSecretService(Database database, UserSecretRepository userSecretRepository) {
         this.database = database;
-        this.userRepository = userRepository;
+        this.userSecretRepository = userSecretRepository;
     }
 
     @Override
     public UserSecret get(String secret, String user, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userSecretRepository.get(tx, tx.getUser(), id);
+        }
     }
 
     @Override
@@ -51,11 +54,23 @@ public class UserSecretService implements IUserSecretService {
 
     @Override
     public UserSecret put(String secret, UserSecret userSecret) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            UserSecret r = userSecretRepository.insert(tx, new UserSecret(tx.getUser(),
+                                                                          userSecret.id,
+                                                                          userSecret.createTime,
+                                                                          userSecret.secret));
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public UserSecret delete(String secret, String user, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            UserSecret r = userSecretRepository.get(tx, tx.getUser(), id);
+            userSecretRepository.delete(tx, tx.getUser(), id);
+            tx.commit();
+            return r;
+        }
     }
 }

@@ -41,8 +41,11 @@ public class VersionService implements IVersionService {
     }
 
     @Override
-    public Version get(String secret, String id) {
-        return null;
+    public Version get(String secret, String application, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            applicationUserRepository.check(tx, application, tx.getUser());
+            return versionRepository.get(tx, application, id);
+        }
     }
 
     @Override

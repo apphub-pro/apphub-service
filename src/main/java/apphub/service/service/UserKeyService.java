@@ -19,6 +19,7 @@ package apphub.service.service;
 import apphub.service.api.IUserKeyService;
 import apphub.service.api.UserKey;
 import apphub.staff.database.Database;
+import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserKeyRepository;
 
 import javax.ws.rs.HeaderParam;
@@ -39,7 +40,9 @@ public class UserKeyService implements IUserKeyService {
 
     @Override
     public UserKey get(String secret, String user, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userKeyRepository.get(tx, tx.getUser(), id);
+        }
     }
 
     @Override
@@ -49,11 +52,23 @@ public class UserKeyService implements IUserKeyService {
 
     @Override
     public UserKey put(String secret, UserKey userKey) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            UserKey r = userKeyRepository.insert(tx, new UserKey(tx.getUser(),
+                                                                 userKey.id,
+                                                                 userKey.createTime,
+                                                                 userKey.key));
+            tx.commit();
+            return r;
+        }
     }
 
     @Override
     public UserKey delete(String secret, String user, String id) {
-        return null;
+        try (Transaction tx = new Transaction(database, false, secret)) {
+            UserKey r = userKeyRepository.get(tx, tx.getUser(), id);
+            userKeyRepository.delete(tx, tx.getUser(), id);
+            tx.commit();
+            return r;
+        }
     }
 }
