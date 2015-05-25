@@ -14,10 +14,10 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.EnvironmentUser;
-import apphub.service.api.IEnvironmentUserService;
+import apphub.service.v1.api.EnvironmentUser;
+import apphub.service.v1.api.IEnvironmentUserService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentUserRepository;
@@ -53,7 +53,7 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     }
 
     @Override
-    public EnvironmentUser put(String secret, EnvironmentUser environmentUser) {
+    public EnvironmentUser post(String secret, EnvironmentUser environmentUser) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {
@@ -67,7 +67,7 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     }
 
     @Override
-    public EnvironmentUser post(String secret, EnvironmentUser environmentUser) {
+    public EnvironmentUser put(String secret, EnvironmentUser environmentUser) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {

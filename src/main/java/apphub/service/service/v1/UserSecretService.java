@@ -14,17 +14,14 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.IUserSecretService;
-import apphub.service.api.UserSecret;
+import apphub.service.v1.api.IUserSecretService;
+import apphub.service.v1.api.UserSecret;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
-import apphub.staff.model.tables.TUser;
-import apphub.staff.repository.UserRepository;
 import apphub.staff.repository.UserSecretRepository;
 
-import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
@@ -53,7 +50,7 @@ public class UserSecretService implements IUserSecretService {
     }
 
     @Override
-    public UserSecret put(String secret, UserSecret userSecret) {
+    public UserSecret post(String secret, UserSecret userSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             UserSecret r = userSecretRepository.insert(tx, new UserSecret(tx.getUser(),
                                                                           userSecret.id,

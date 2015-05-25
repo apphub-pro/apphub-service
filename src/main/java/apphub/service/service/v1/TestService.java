@@ -14,7 +14,7 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-@Path("/test")
+@Path("/v1/test")
 public class TestService {
     public TestService() {
     }

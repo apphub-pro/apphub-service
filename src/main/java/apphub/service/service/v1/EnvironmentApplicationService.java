@@ -14,18 +14,15 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.EnvironmentApplication;
-import apphub.service.api.IEnvironmentApplicationService;
+import apphub.service.v1.api.EnvironmentApplication;
+import apphub.service.v1.api.IEnvironmentApplicationService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentApplicationRepository;
-import apphub.staff.repository.EnvironmentRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -59,7 +56,7 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     }
 
     @Override
-    public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
+    public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
             EnvironmentApplication r = environmentApplicationRepository.insert(tx, environmentApplication);
@@ -69,7 +66,7 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     }
 
     @Override
-    public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
+    public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
             EnvironmentApplication r = environmentApplicationRepository.update(tx, environmentApplication);

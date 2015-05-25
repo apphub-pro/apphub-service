@@ -14,11 +14,11 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
 import apphub.Config;
-import apphub.service.api.IUserService;
-import apphub.service.api.User;
+import apphub.service.v1.api.IUserService;
+import apphub.service.v1.api.User;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
@@ -34,7 +34,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
 
@@ -60,7 +59,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User put(String password, User user) {
+    public User post(String password, User user) {
         try (Transaction tx = new Transaction(database, false, null)) {
             if (!userRepository.exists(tx, user.id)) {
                 if (!userRepository.existsByEmail(tx, user.email)) {
@@ -79,7 +78,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User post(String secret, User user) {
+    public User put(String secret, User user) {
         return null;
     }
 

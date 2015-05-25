@@ -14,17 +14,16 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.Environment;
-import apphub.service.api.EnvironmentUser;
-import apphub.service.api.IEnvironmentService;
+import apphub.service.v1.api.Environment;
+import apphub.service.v1.api.EnvironmentUser;
+import apphub.service.v1.api.IEnvironmentService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -58,7 +57,7 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment put(String secret, String environmentSecret, Environment environment) {
+    public Environment post(String secret, String environmentSecret, Environment environment) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             Environment r = environmentRepository.insert(tx, environment, environmentSecret);
             environmentUserRepository.insert(tx, new EnvironmentUser(environment.id,
@@ -74,7 +73,7 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment post(String secret, Environment environment) {
+    public Environment put(String secret, Environment environment) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environment.id, tx.getUser());
             Environment r = environmentRepository.update(tx, environment);

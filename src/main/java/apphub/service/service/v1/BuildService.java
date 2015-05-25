@@ -14,17 +14,14 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.Build;
-import apphub.service.api.IBuildService;
+import apphub.service.v1.api.Build;
+import apphub.service.v1.api.IBuildService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.BuildRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
-
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
 
 /**
  * @author Dmitry Kotlyarov
@@ -50,7 +47,7 @@ public class BuildService implements IBuildService {
     }
 
     @Override
-    public Build put(String secret, Build build) {
+    public Build post(String secret, Build build) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, build.environment, tx.getUser());
             Build r = buildRepository.insert(tx, build);
@@ -60,7 +57,7 @@ public class BuildService implements IBuildService {
     }
 
     @Override
-    public Build post(String secret, Build build) {
+    public Build put(String secret, Build build) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, build.environment, tx.getUser());
             Build r = buildRepository.update(tx, build);

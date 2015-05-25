@@ -14,18 +14,16 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.Application;
-import apphub.service.api.ApplicationUser;
-import apphub.service.api.IApplicationService;
+import apphub.service.v1.api.Application;
+import apphub.service.v1.api.ApplicationUser;
+import apphub.service.v1.api.IApplicationService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationRepository;
 import apphub.staff.repository.ApplicationUserRepository;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -57,7 +55,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public Application put(String secret, Application application) {
+    public Application post(String secret, Application application) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             Application r = applicationRepository.insert(tx, application);
             applicationUserRepository.insert(tx, new ApplicationUser(application.id,
@@ -73,7 +71,7 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public Application post(String secret, Application application) {
+    public Application put(String secret, Application application) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, application.id, tx.getUser());
             Application r = applicationRepository.update(tx, application);

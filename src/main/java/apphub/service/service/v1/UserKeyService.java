@@ -14,15 +14,14 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.IUserKeyService;
-import apphub.service.api.UserKey;
+import apphub.service.v1.api.IUserKeyService;
+import apphub.service.v1.api.UserKey;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserKeyRepository;
 
-import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
@@ -51,7 +50,7 @@ public class UserKeyService implements IUserKeyService {
     }
 
     @Override
-    public UserKey put(String secret, UserKey userKey) {
+    public UserKey post(String secret, UserKey userKey) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             UserKey r = userKeyRepository.insert(tx, new UserKey(tx.getUser(),
                                                                  userKey.id,

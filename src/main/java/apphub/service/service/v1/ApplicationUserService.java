@@ -14,10 +14,10 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.ApplicationUser;
-import apphub.service.api.IApplicationUserService;
+import apphub.service.v1.api.ApplicationUser;
+import apphub.service.v1.api.IApplicationUserService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationUserRepository;
@@ -53,7 +53,7 @@ public class ApplicationUserService implements IApplicationUserService {
     }
 
     @Override
-    public ApplicationUser put(String secret, ApplicationUser applicationUser) {
+    public ApplicationUser post(String secret, ApplicationUser applicationUser) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {
@@ -67,7 +67,7 @@ public class ApplicationUserService implements IApplicationUserService {
     }
 
     @Override
-    public ApplicationUser post(String secret, ApplicationUser applicationUser) {
+    public ApplicationUser put(String secret, ApplicationUser applicationUser) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {

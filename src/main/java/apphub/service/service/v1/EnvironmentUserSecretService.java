@@ -14,10 +14,10 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.EnvironmentUserSecret;
-import apphub.service.api.IEnvironmentUserSecretService;
+import apphub.service.v1.api.EnvironmentUserSecret;
+import apphub.service.v1.api.IEnvironmentUserSecretService;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentUserRepository;
@@ -54,7 +54,7 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
     }
 
     @Override
-    public EnvironmentUserSecret put(String secret, EnvironmentUserSecret environmentUserSecret) {
+    public EnvironmentUserSecret post(String secret, EnvironmentUserSecret environmentUserSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentUserSecret.environment, tx.getUser());
             EnvironmentUserSecret r = environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment,

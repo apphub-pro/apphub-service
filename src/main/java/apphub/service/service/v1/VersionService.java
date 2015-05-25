@@ -14,16 +14,14 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.IVersionService;
-import apphub.service.api.Version;
+import apphub.service.v1.api.IVersionService;
+import apphub.service.v1.api.Version;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationUserRepository;
 import apphub.staff.repository.VersionRepository;
-
-import javax.ws.rs.HeaderParam;
 
 /**
  * @author Dmitry Kotlyarov
@@ -49,7 +47,7 @@ public class VersionService implements IVersionService {
     }
 
     @Override
-    public Version put(String secret, Version version) {
+    public Version post(String secret, Version version) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
             Version r = versionRepository.insert(tx, version);
@@ -59,7 +57,7 @@ public class VersionService implements IVersionService {
     }
 
     @Override
-    public Version post(String secret, Version version) {
+    public Version put(String secret, Version version) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
             Version r = versionRepository.update(tx, version);

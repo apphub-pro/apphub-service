@@ -14,44 +14,37 @@
  * is obtained from copyright holders.
  */
 
-package apphub.service.service;
+package apphub.service.service.v1;
 
-import apphub.service.api.ILoginService;
+import apphub.service.v1.api.IActivationService;
+import apphub.service.v1.api.User;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
-import apphub.util.string.StringUtil;
-
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
+import apphub.staff.util.secret.SecretUtil;
 
 /**
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class LoginService implements ILoginService {
+public class ActivationService implements IActivationService {
     protected final Database database;
     protected final UserRepository userRepository;
 
-    public LoginService(Database database, UserRepository userRepository) {
+    public ActivationService(Database database, UserRepository userRepository) {
         this.database = database;
         this.userRepository = userRepository;
     }
 
     @Override
-    public String get(String id, String password) {
-        try (Transaction tx = new Transaction(database)) {
-            if (Arrays.equals(StringUtil.toBytes(password), userRepository.getPassword(tx, id))) {
-                return userRepository.getSecret(tx, id);
-            } else {
-                throw new ServerErrorException(String.format("Invalid credentials for user '%s'", id), Response.Status.NOT_FOUND);
+    public String get(String code) {
+        try (Transaction tx = new Transaction(database, false, null)) {
+            User user = userRepository.getByCode(tx, code);
+            if (userRepository.findSecret(tx, user.id) == null) {
+                userRepository.updateSecret(tx, user.id, SecretUtil.randomSecret());
+                tx.commit();
             }
+            return "ACTIVATION IS SUCCESSFUL";
         }
-    }
-
-    @Override
-    public String post(String id, String password) {
-        return null;
     }
 }
