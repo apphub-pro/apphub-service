@@ -52,10 +52,11 @@ public class UserSecretService implements IUserSecretService {
     @Override
     public UserSecret post(String secret, UserSecret userSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            UserSecret r = userSecretRepository.insert(tx, new UserSecret(tx.getUser(),
-                                                                          userSecret.id,
-                                                                          userSecret.createTime,
-                                                                          userSecret.secret));
+            userSecretRepository.insert(tx, new UserSecret(tx.getUser(),
+                                                           userSecret.id,
+                                                           userSecret.createTime,
+                                                           userSecret.secret));
+            UserSecret r = userSecretRepository.get(tx, userSecret.user, userSecret.id);
             tx.commit();
             return r;
         }

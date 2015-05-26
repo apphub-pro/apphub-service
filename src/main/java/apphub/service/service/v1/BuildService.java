@@ -50,7 +50,8 @@ public class BuildService implements IBuildService {
     public Build post(String secret, Build build) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, build.environment, tx.getUser());
-            Build r = buildRepository.insert(tx, build);
+            buildRepository.insert(tx, build);
+            Build r = buildRepository.get(tx, build.application, build.version, build.environment);
             tx.commit();
             return r;
         }
@@ -60,7 +61,8 @@ public class BuildService implements IBuildService {
     public Build put(String secret, Build build) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, build.environment, tx.getUser());
-            Build r = buildRepository.update(tx, build);
+            buildRepository.update(tx, build);
+            Build r = buildRepository.get(tx, build.application, build.version, build.environment);
             tx.commit();
             return r;
         }

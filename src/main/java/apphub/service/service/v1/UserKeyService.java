@@ -52,10 +52,11 @@ public class UserKeyService implements IUserKeyService {
     @Override
     public UserKey post(String secret, UserKey userKey) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            UserKey r = userKeyRepository.insert(tx, new UserKey(tx.getUser(),
-                                                                 userKey.id,
-                                                                 userKey.createTime,
-                                                                 userKey.key));
+            userKeyRepository.insert(tx, new UserKey(tx.getUser(),
+                                                     userKey.id,
+                                                     userKey.createTime,
+                                                     userKey.key));
+            UserKey r = userKeyRepository.get(tx, userKey.user, userKey.id);
             tx.commit();
             return r;
         }

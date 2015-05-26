@@ -57,7 +57,8 @@ public class EnvironmentUserService implements IEnvironmentUserService {
         try (Transaction tx = new Transaction(database, false, secret)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {
-                EnvironmentUser r = environmentUserRepository.insert(tx, environmentUser);
+                environmentUserRepository.insert(tx, environmentUser);
+                EnvironmentUser r = environmentUserRepository.get(tx, environmentUser.environment, environmentUser.user);
                 tx.commit();
                 return r;
             } else {
@@ -71,7 +72,8 @@ public class EnvironmentUserService implements IEnvironmentUserService {
         try (Transaction tx = new Transaction(database, false, secret)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {
-                EnvironmentUser r = environmentUserRepository.update(tx, environmentUser);
+                environmentUserRepository.update(tx, environmentUser);
+                EnvironmentUser r = environmentUserRepository.get(tx, environmentUser.environment, environmentUser.user);
                 tx.commit();
                 return r;
             } else {

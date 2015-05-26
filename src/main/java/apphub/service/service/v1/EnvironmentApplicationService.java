@@ -59,7 +59,8 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
-            EnvironmentApplication r = environmentApplicationRepository.insert(tx, environmentApplication);
+            environmentApplicationRepository.insert(tx, environmentApplication);
+            EnvironmentApplication r = environmentApplicationRepository.get(tx, environmentApplication.environment, environmentApplication.application);
             tx.commit();
             return r;
         }
@@ -69,7 +70,8 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
-            EnvironmentApplication r = environmentApplicationRepository.update(tx, environmentApplication);
+            environmentApplicationRepository.update(tx, environmentApplication);
+            EnvironmentApplication r = environmentApplicationRepository.get(tx, environmentApplication.environment, environmentApplication.application);
             tx.commit();
             return r;
         }

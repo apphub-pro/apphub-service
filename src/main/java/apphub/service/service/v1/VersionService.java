@@ -50,7 +50,8 @@ public class VersionService implements IVersionService {
     public Version post(String secret, Version version) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
-            Version r = versionRepository.insert(tx, version);
+            versionRepository.insert(tx, version);
+            Version r = versionRepository.get(tx, version.application, version.id);
             tx.commit();
             return r;
         }
@@ -60,7 +61,8 @@ public class VersionService implements IVersionService {
     public Version put(String secret, Version version) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
-            Version r = versionRepository.update(tx, version);
+            versionRepository.update(tx, version);
+            Version r = versionRepository.get(tx, version.application, version.id);
             tx.commit();
             return r;
         }

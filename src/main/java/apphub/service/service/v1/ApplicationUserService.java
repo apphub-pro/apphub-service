@@ -57,7 +57,8 @@ public class ApplicationUserService implements IApplicationUserService {
         try (Transaction tx = new Transaction(database, false, secret)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {
-                ApplicationUser r = applicationUserRepository.insert(tx, applicationUser);
+                applicationUserRepository.insert(tx, applicationUser);
+                ApplicationUser r = applicationUserRepository.get(tx, applicationUser.application, applicationUser.user);
                 tx.commit();
                 return r;
             } else {
@@ -71,7 +72,8 @@ public class ApplicationUserService implements IApplicationUserService {
         try (Transaction tx = new Transaction(database, false, secret)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {
-                ApplicationUser r = applicationUserRepository.update(tx, applicationUser);
+                applicationUserRepository.update(tx, applicationUser);
+                ApplicationUser r = applicationUserRepository.get(tx, applicationUser.application, applicationUser.user);
                 tx.commit();
                 return r;
             } else {

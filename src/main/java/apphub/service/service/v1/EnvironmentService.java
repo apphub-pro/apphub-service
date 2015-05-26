@@ -59,7 +59,7 @@ public class EnvironmentService implements IEnvironmentService {
     @Override
     public Environment post(String secret, String environmentSecret, Environment environment) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            Environment r = environmentRepository.insert(tx, environment, environmentSecret);
+            environmentRepository.insert(tx, environment, environmentSecret);
             environmentUserRepository.insert(tx, new EnvironmentUser(environment.id,
                                                                      tx.getUser(),
                                                                      tx.getTime(),
@@ -67,6 +67,7 @@ public class EnvironmentService implements IEnvironmentService {
                                                                      tx.getTime(),
                                                                      tx.getUser(),
                                                                      true));
+            Environment r = environmentRepository.get(tx, environment.id);
             tx.commit();
             return r;
         }
@@ -76,7 +77,8 @@ public class EnvironmentService implements IEnvironmentService {
     public Environment put(String secret, Environment environment) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environment.id, tx.getUser());
-            Environment r = environmentRepository.update(tx, environment);
+            environmentRepository.update(tx, environment);
+            Environment r = environmentRepository.get(tx, environment.id);
             tx.commit();
             return r;
         }

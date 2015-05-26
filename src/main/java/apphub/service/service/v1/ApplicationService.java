@@ -57,7 +57,7 @@ public class ApplicationService implements IApplicationService {
     @Override
     public Application post(String secret, Application application) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            Application r = applicationRepository.insert(tx, application);
+            applicationRepository.insert(tx, application);
             applicationUserRepository.insert(tx, new ApplicationUser(application.id,
                                                                      tx.getUser(),
                                                                      tx.getTime(),
@@ -65,6 +65,7 @@ public class ApplicationService implements IApplicationService {
                                                                      tx.getTime(),
                                                                      tx.getUser(),
                                                                      true));
+            Application r = applicationRepository.get(tx, application.id);
             tx.commit();
             return r;
         }
@@ -74,7 +75,8 @@ public class ApplicationService implements IApplicationService {
     public Application put(String secret, Application application) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             applicationUserRepository.check(tx, application.id, tx.getUser());
-            Application r = applicationRepository.update(tx, application);
+            applicationRepository.update(tx, application);
+            Application r = applicationRepository.get(tx, application.id);
             tx.commit();
             return r;
         }

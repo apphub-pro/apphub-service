@@ -57,11 +57,15 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
     public EnvironmentUserSecret post(String secret, EnvironmentUserSecret environmentUserSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentUserSecret.environment, tx.getUser());
-            EnvironmentUserSecret r = environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment,
-                                                                                                           tx.getUser(),
-                                                                                                           environmentUserSecret.id,
-                                                                                                           environmentUserSecret.createTime,
-                                                                                                           environmentUserSecret.secret));
+            environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment,
+                                                                                 tx.getUser(),
+                                                                                 environmentUserSecret.id,
+                                                                                 environmentUserSecret.createTime,
+                                                                                 environmentUserSecret.secret));
+            EnvironmentUserSecret r = environmentUserSecretRepository.get(tx,
+                                                                          environmentUserSecret.environment,
+                                                                          environmentUserSecret.user,
+                                                                          environmentUserSecret.id);
             tx.commit();
             return r;
         }
