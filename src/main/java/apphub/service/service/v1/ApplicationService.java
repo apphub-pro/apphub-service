@@ -51,7 +51,9 @@ public class ApplicationService implements IApplicationService {
 
     @Override
     public List<Application> list(String secret) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return applicationRepository.findByUser(tx, tx.getUser());
+        }
     }
 
     @Override
