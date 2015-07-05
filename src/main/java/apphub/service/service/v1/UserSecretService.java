@@ -46,7 +46,9 @@ public class UserSecretService implements IUserSecretService {
 
     @Override
     public List<UserSecret> list(String secret, String user) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userSecretRepository.findByUser(tx, tx.getUser());
+        }
     }
 
     @Override
