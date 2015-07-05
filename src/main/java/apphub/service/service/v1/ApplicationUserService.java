@@ -49,7 +49,10 @@ public class ApplicationUserService implements IApplicationUserService {
 
     @Override
     public List<ApplicationUser> list(String secret, String application) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            applicationUserRepository.check(tx, application, tx.getUser());
+            return applicationUserRepository.findByApplication(tx, application);
+        }
     }
 
     @Override
