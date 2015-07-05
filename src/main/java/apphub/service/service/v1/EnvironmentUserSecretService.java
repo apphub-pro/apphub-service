@@ -50,7 +50,10 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
 
     @Override
     public List<EnvironmentUserSecret> list(String secret, String environment) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentUserSecretRepository.findByEnvironmentAndUser(tx, environment, tx.getUser());
+        }
     }
 
     @Override
