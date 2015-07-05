@@ -53,7 +53,9 @@ public class EnvironmentService implements IEnvironmentService {
 
     @Override
     public List<Environment> list(String secret) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return environmentRepository.findByUser(tx, tx.getUser());
+        }
     }
 
     @Override
