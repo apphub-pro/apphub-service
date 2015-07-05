@@ -52,7 +52,10 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
 
     @Override
     public List<EnvironmentApplication> list(String secret, String environment) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentApplicationRepository.findByEnvironment(tx, environment);
+        }
     }
 
     @Override
