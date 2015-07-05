@@ -46,7 +46,9 @@ public class UserKeyService implements IUserKeyService {
 
     @Override
     public List<UserKey> list(String secret, String user) {
-        return null;
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userKeyRepository.findByUser(tx, tx.getUser());
+        }
     }
 
     @Override
