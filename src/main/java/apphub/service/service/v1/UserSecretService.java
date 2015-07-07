@@ -21,7 +21,9 @@ import apphub.service.v1.api.UserSecret;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserSecretRepository;
+import apphub.staff.util.secret.SecretUtil;
 
+import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
@@ -38,14 +40,21 @@ public class UserSecretService implements IUserSecretService {
     }
 
     @Override
-    public UserSecret get(String secret, String user, String id) {
+    public UserSecret get(String secret, String id) {
         try (Transaction tx = new Transaction(database, secret)) {
             return userSecretRepository.get(tx, tx.getUser(), id);
         }
     }
 
     @Override
-    public List<UserSecret> list(String secret, String user) {
+    public String secret(String secret, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userSecretRepository.getSecret(tx, tx.getUser(), id);
+        }
+    }
+
+    @Override
+    public List<UserSecret> list(String secret) {
         try (Transaction tx = new Transaction(database, secret)) {
             return userSecretRepository.findByUser(tx, tx.getUser());
         }
@@ -54,10 +63,7 @@ public class UserSecretService implements IUserSecretService {
     @Override
     public UserSecret post(String secret, UserSecret userSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            userSecretRepository.insert(tx, new UserSecret(tx.getUser(),
-                                                           userSecret.id,
-                                                           userSecret.createTime,
-                                                           userSecret.secret));
+            userSecretRepository.insert(tx, new UserSecret(tx.getUser(), userSecret.id, userSecret.createTime), SecretUtil.randomSecret());
             UserSecret r = userSecretRepository.get(tx, userSecret.user, userSecret.id);
             tx.commit();
             return r;
@@ -65,7 +71,7 @@ public class UserSecretService implements IUserSecretService {
     }
 
     @Override
-    public UserSecret delete(String secret, String user, String id) {
+    public UserSecret delete(String secret, String id) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             UserSecret r = userSecretRepository.get(tx, tx.getUser(), id);
             userSecretRepository.delete(tx, tx.getUser(), id);
