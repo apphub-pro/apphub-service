@@ -22,6 +22,7 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserKeyRepository;
 
+import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
@@ -38,26 +39,30 @@ public class UserKeyService implements IUserKeyService {
     }
 
     @Override
-    public UserKey get(String secret, String user, String id) {
+    public UserKey get(String secret, String id) {
         try (Transaction tx = new Transaction(database, secret)) {
             return userKeyRepository.get(tx, tx.getUser(), id);
         }
     }
 
     @Override
-    public List<UserKey> list(String secret, String user) {
+    public String key(String secret, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            return userKeyRepository.getKey(tx, tx.getUser(), id);
+        }
+    }
+
+    @Override
+    public List<UserKey> list(String secret) {
         try (Transaction tx = new Transaction(database, secret)) {
             return userKeyRepository.findByUser(tx, tx.getUser());
         }
     }
 
     @Override
-    public UserKey post(String secret, UserKey userKey) {
+    public UserKey post(String secret, String key, UserKey userKey) {
         try (Transaction tx = new Transaction(database, false, secret)) {
-            userKeyRepository.insert(tx, new UserKey(tx.getUser(),
-                                                     userKey.id,
-                                                     userKey.createTime,
-                                                     userKey.key));
+            userKeyRepository.insert(tx, new UserKey(tx.getUser(), userKey.id, userKey.createTime), key);
             UserKey r = userKeyRepository.get(tx, userKey.user, userKey.id);
             tx.commit();
             return r;
@@ -65,7 +70,7 @@ public class UserKeyService implements IUserKeyService {
     }
 
     @Override
-    public UserKey delete(String secret, String user, String id) {
+    public UserKey delete(String secret, String id) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             UserKey r = userKeyRepository.get(tx, tx.getUser(), id);
             userKeyRepository.delete(tx, tx.getUser(), id);
