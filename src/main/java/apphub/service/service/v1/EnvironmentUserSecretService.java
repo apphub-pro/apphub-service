@@ -22,7 +22,9 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentUserRepository;
 import apphub.staff.repository.EnvironmentUserSecretRepository;
+import apphub.staff.util.secret.SecretUtil;
 
+import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
@@ -49,6 +51,14 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
     }
 
     @Override
+    public String secret(String secret, String environment, String id) {
+        try (Transaction tx = new Transaction(database, secret)) {
+            environmentUserRepository.check(tx, environment, tx.getUser());
+            return environmentUserSecretRepository.getSecret(tx, environment, tx.getUser(), id);
+        }
+    }
+
+    @Override
     public List<EnvironmentUserSecret> list(String secret, String environment) {
         try (Transaction tx = new Transaction(database, secret)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
@@ -60,15 +70,8 @@ public class EnvironmentUserSecretService implements IEnvironmentUserSecretServi
     public EnvironmentUserSecret post(String secret, EnvironmentUserSecret environmentUserSecret) {
         try (Transaction tx = new Transaction(database, false, secret)) {
             environmentUserRepository.check(tx, environmentUserSecret.environment, tx.getUser());
-            environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment,
-                                                                                 tx.getUser(),
-                                                                                 environmentUserSecret.id,
-                                                                                 environmentUserSecret.createTime,
-                                                                                 environmentUserSecret.secret));
-            EnvironmentUserSecret r = environmentUserSecretRepository.get(tx,
-                                                                          environmentUserSecret.environment,
-                                                                          environmentUserSecret.user,
-                                                                          environmentUserSecret.id);
+            environmentUserSecretRepository.insert(tx, new EnvironmentUserSecret(environmentUserSecret.environment, tx.getUser(), environmentUserSecret.id, environmentUserSecret.createTime), SecretUtil.randomSecret());
+            EnvironmentUserSecret r = environmentUserSecretRepository.get(tx, environmentUserSecret.environment, environmentUserSecret.user, environmentUserSecret.id);
             tx.commit();
             return r;
         }
