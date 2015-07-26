@@ -65,7 +65,10 @@ public class UserService implements IUserService {
                 if (!userRepository.existsByEmail(tx, user.email)) {
                     String code = SecretUtil.randomSecret();
                     userRepository.insert(tx, user, StringUtil.toBytes(password), code);
-                    sendActivationEmail(user.id, user.name, user.email, code);
+// DTP:                    sendActivationEmail(user.id, user.name, user.email, code);
+// ETP [BEGIN]:
+                    user.url = String.format("https://service.%s/service/v1/activation/%s", Config.get().getDomain(), code);
+// ETP [END]:
                     tx.commit();
                     return user;
                 } else {
@@ -90,7 +93,7 @@ public class UserService implements IUserService {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("AppHub user activation notification", Util.CHARSET.name());
             message.setText(String.format(activationEmail, name, id,
-                            String.format("https://service.%s/service/activation/%s", Config.get().getDomain(), code)), Util.CHARSET.name());
+                            String.format("https://service.%s/service/v1/activation/%s", Config.get().getDomain(), code)), Util.CHARSET.name());
             Transport.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
