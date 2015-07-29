@@ -24,7 +24,6 @@ import apphub.staff.repository.EnvironmentUserRepository;
 import apphub.staff.repository.EnvironmentUserSecretRepository;
 import apphub.staff.util.secret.SecretUtil;
 
-import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**

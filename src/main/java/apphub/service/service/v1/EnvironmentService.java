@@ -24,8 +24,7 @@ import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentRepository;
 import apphub.staff.repository.EnvironmentUserRepository;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ForbiddenException;
 import java.util.List;
 
 /**
@@ -96,7 +95,7 @@ public class EnvironmentService implements IEnvironmentService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", id, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", id, tx.getUser()));
             }
         }
     }

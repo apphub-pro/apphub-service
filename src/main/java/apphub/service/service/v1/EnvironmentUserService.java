@@ -22,8 +22,7 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.EnvironmentUserRepository;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ForbiddenException;
 import java.util.List;
 
 /**
@@ -65,7 +64,7 @@ public class EnvironmentUserService implements IEnvironmentUserService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()));
             }
         }
     }
@@ -80,7 +79,7 @@ public class EnvironmentUserService implements IEnvironmentUserService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environmentUser.environment, tx.getUser()));
             }
         }
     }
@@ -95,7 +94,7 @@ public class EnvironmentUserService implements IEnvironmentUserService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environment, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Environment user with environment '%s' and user '%s' does not have an admin privilege", environment, tx.getUser()));
             }
         }
     }

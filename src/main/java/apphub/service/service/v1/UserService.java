@@ -34,8 +34,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ForbiddenException;
 
 /**
  * @author Dmitry Kotlyarov
@@ -72,10 +71,10 @@ public class UserService implements IUserService {
                     tx.commit();
                     return user;
                 } else {
-                    throw new ServerErrorException(String.format("User with email '%s' is found", user.email), Response.Status.FORBIDDEN);
+                    throw new ForbiddenException(String.format("User with email '%s' is found", user.email));
                 }
             } else {
-                throw new ServerErrorException(String.format("User with id '%s' is found", user.id), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("User with id '%s' is found", user.id));
             }
         }
     }

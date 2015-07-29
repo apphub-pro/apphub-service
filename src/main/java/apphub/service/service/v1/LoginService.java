@@ -22,8 +22,7 @@ import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserRepository;
 import apphub.util.string.StringUtil;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 
 /**
@@ -45,7 +44,7 @@ public class LoginService implements ILoginService {
             if (Arrays.equals(StringUtil.toBytes(password), userRepository.getPassword(tx, id))) {
                 return userRepository.getSecret(tx, id);
             } else {
-                throw new ServerErrorException(String.format("Invalid credentials for user '%s'", id), Response.Status.NOT_FOUND);
+                throw new NotFoundException(String.format("Invalid credentials for user '%s'", id));
             }
         }
     }

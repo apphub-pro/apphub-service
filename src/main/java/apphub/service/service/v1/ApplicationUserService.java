@@ -22,8 +22,7 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.ApplicationUserRepository;
 
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ForbiddenException;
 import java.util.List;
 
 /**
@@ -65,7 +64,7 @@ public class ApplicationUserService implements IApplicationUserService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()));
             }
         }
     }
@@ -80,7 +79,7 @@ public class ApplicationUserService implements IApplicationUserService {
                 tx.commit();
                 return r;
             } else {
-                throw new ServerErrorException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()), Response.Status.FORBIDDEN);
+                throw new ForbiddenException(String.format("Application user with application '%s' and user '%s' does not have an admin privilege", applicationUser.application, tx.getUser()));
             }
         }
     }

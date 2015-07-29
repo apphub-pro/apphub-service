@@ -23,7 +23,6 @@ import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserSecretRepository;
 import apphub.staff.util.secret.SecretUtil;
 
-import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**

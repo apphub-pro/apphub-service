@@ -22,7 +22,6 @@ import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
 import apphub.staff.repository.UserKeyRepository;
 
-import javax.ws.rs.HeaderParam;
 import java.util.List;
 
 /**
