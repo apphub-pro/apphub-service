@@ -16,11 +16,11 @@
 
 package apphub.service.service.v1;
 
-import apphub.service.v1.api.IUserKeyService;
-import apphub.service.v1.api.UserKey;
+import apphub.service.v1.api.IKeyService;
+import apphub.service.v1.api.Key;
 import apphub.staff.database.Database;
 import apphub.staff.database.Transaction;
-import apphub.staff.repository.UserKeyRepository;
+import apphub.staff.repository.KeyRepository;
 
 import java.util.List;
 
@@ -28,51 +28,51 @@ import java.util.List;
  * @author Dmitry Kotlyarov
  * @since 1.0
  */
-public class UserKeyService implements IUserKeyService {
+public class KeyService implements IKeyService {
     protected final Database database;
-    protected final UserKeyRepository userKeyRepository;
+    protected final KeyRepository keyRepository;
 
-    public UserKeyService(Database database, UserKeyRepository userKeyRepository) {
+    public KeyService(Database database, KeyRepository keyRepository) {
         this.database = database;
-        this.userKeyRepository = userKeyRepository;
+        this.keyRepository = keyRepository;
     }
 
     @Override
-    public UserKey get(String token, String id) {
+    public Key get(String token, String id) {
         try (Transaction tx = new Transaction(database, token)) {
-            return userKeyRepository.get(tx, tx.getUser(), id);
+            return keyRepository.get(tx, tx.getUser(), id);
         }
     }
 
     @Override
     public String key(String token, String id) {
         try (Transaction tx = new Transaction(database, token)) {
-            return userKeyRepository.getKey(tx, tx.getUser(), id);
+            return keyRepository.getKey(tx, tx.getUser(), id);
         }
     }
 
     @Override
-    public List<UserKey> list(String token) {
+    public List<Key> list(String token) {
         try (Transaction tx = new Transaction(database, token)) {
-            return userKeyRepository.findByUser(tx, tx.getUser());
+            return keyRepository.findByUser(tx, tx.getUser());
         }
     }
 
     @Override
-    public UserKey post(String token, String key, UserKey userKey) {
+    public Key post(String token, String key, Key keyInfo) {
         try (Transaction tx = new Transaction(database, false, token)) {
-            userKeyRepository.insert(tx, new UserKey(tx.getUser(), userKey.id, userKey.createTime), key);
-            UserKey r = userKeyRepository.get(tx, userKey.user, userKey.id);
+            keyRepository.insert(tx, new Key(tx.getUser(), keyInfo.id, keyInfo.createTime), key);
+            Key r = keyRepository.get(tx, keyInfo.user, keyInfo.id);
             tx.commit();
             return r;
         }
     }
 
     @Override
-    public UserKey delete(String token, String id) {
+    public Key delete(String token, String id) {
         try (Transaction tx = new Transaction(database, false, token)) {
-            UserKey r = userKeyRepository.get(tx, tx.getUser(), id);
-            userKeyRepository.delete(tx, tx.getUser(), id);
+            Key r = keyRepository.get(tx, tx.getUser(), id);
+            keyRepository.delete(tx, tx.getUser(), id);
             tx.commit();
             return r;
         }
