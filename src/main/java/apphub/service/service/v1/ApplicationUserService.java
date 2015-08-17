@@ -39,24 +39,24 @@ public class ApplicationUserService implements IApplicationUserService {
     }
 
     @Override
-    public ApplicationUser get(String secret, String application, String user) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public ApplicationUser get(String token, String application, String user) {
+        try (Transaction tx = new Transaction(database, token)) {
             applicationUserRepository.check(tx, application, tx.getUser());
             return applicationUserRepository.get(tx, application, user);
         }
     }
 
     @Override
-    public List<ApplicationUser> list(String secret, String application) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public List<ApplicationUser> list(String token, String application) {
+        try (Transaction tx = new Transaction(database, token)) {
             applicationUserRepository.check(tx, application, tx.getUser());
             return applicationUserRepository.findByApplication(tx, application);
         }
     }
 
     @Override
-    public ApplicationUser post(String secret, ApplicationUser applicationUser) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public ApplicationUser post(String token, ApplicationUser applicationUser) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {
                 applicationUserRepository.insert(tx, applicationUser);
@@ -70,8 +70,8 @@ public class ApplicationUserService implements IApplicationUserService {
     }
 
     @Override
-    public ApplicationUser put(String secret, ApplicationUser applicationUser) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public ApplicationUser put(String token, ApplicationUser applicationUser) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             ApplicationUser user = applicationUserRepository.get(tx, applicationUser.application, tx.getUser());
             if (user.admin) {
                 applicationUserRepository.update(tx, applicationUser);

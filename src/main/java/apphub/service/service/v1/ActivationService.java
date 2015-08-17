@@ -40,8 +40,8 @@ public class ActivationService implements IActivationService {
     public String get(String code) {
         try (Transaction tx = new Transaction(database, false, null)) {
             User user = userRepository.getByCode(tx, code);
-            if (userRepository.findSecret(tx, user.id) == null) {
-                userRepository.updateSecret(tx, user.id, SecretUtil.randomSecret());
+            if (userRepository.findToken(tx, user.id) == null) {
+                userRepository.updateToken(tx, user.id, SecretUtil.randomSecret());
                 tx.commit();
             }
             return "ACTIVATION IS SUCCESSFUL";

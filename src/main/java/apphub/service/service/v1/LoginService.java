@@ -42,7 +42,7 @@ public class LoginService implements ILoginService {
     public String get(String id, String password) {
         try (Transaction tx = new Transaction(database)) {
             if (Arrays.equals(StringUtil.toBytes(password), userRepository.getPassword(tx, id))) {
-                return userRepository.getSecret(tx, id);
+                return userRepository.getToken(tx, id);
             } else {
                 throw new NotFoundException(String.format("Invalid credentials for user '%s'", id));
             }

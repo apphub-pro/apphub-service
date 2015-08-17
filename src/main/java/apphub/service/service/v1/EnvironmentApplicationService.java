@@ -43,24 +43,24 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     }
 
     @Override
-    public EnvironmentApplication get(String secret, String environment, String application) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public EnvironmentApplication get(String token, String environment, String application) {
+        try (Transaction tx = new Transaction(database, token)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
             return environmentApplicationRepository.get(tx, environment, application);
         }
     }
 
     @Override
-    public List<EnvironmentApplication> list(String secret, String environment) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public List<EnvironmentApplication> list(String token, String environment) {
+        try (Transaction tx = new Transaction(database, token)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
             return environmentApplicationRepository.findByEnvironment(tx, environment);
         }
     }
 
     @Override
-    public EnvironmentApplication post(String secret, EnvironmentApplication environmentApplication) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentApplication post(String token, EnvironmentApplication environmentApplication) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
             environmentApplicationRepository.insert(tx, environmentApplication);
             EnvironmentApplication r = environmentApplicationRepository.get(tx, environmentApplication.environment, environmentApplication.application);
@@ -70,8 +70,8 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     }
 
     @Override
-    public EnvironmentApplication put(String secret, EnvironmentApplication environmentApplication) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentApplication put(String token, EnvironmentApplication environmentApplication) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             environmentUserRepository.check(tx, environmentApplication.environment, tx.getUser());
             environmentApplicationRepository.update(tx, environmentApplication);
             EnvironmentApplication r = environmentApplicationRepository.get(tx, environmentApplication.environment, environmentApplication.application);
@@ -81,8 +81,8 @@ public class EnvironmentApplicationService implements IEnvironmentApplicationSer
     }
 
     @Override
-    public EnvironmentApplication delete(String secret, String environment, String application) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentApplication delete(String token, String environment, String application) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
             EnvironmentApplication r = environmentApplicationRepository.get(tx, environment, application);
             environmentApplicationRepository.delete(tx, environment, application);

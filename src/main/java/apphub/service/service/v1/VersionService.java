@@ -39,16 +39,16 @@ public class VersionService implements IVersionService {
     }
 
     @Override
-    public Version get(String secret, String application, String id) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public Version get(String token, String application, String id) {
+        try (Transaction tx = new Transaction(database, token)) {
             applicationUserRepository.check(tx, application, tx.getUser());
             return versionRepository.get(tx, application, id);
         }
     }
 
     @Override
-    public Version post(String secret, Version version) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Version post(String token, Version version) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
             versionRepository.insert(tx, version);
             Version r = versionRepository.get(tx, version.application, version.id);
@@ -58,8 +58,8 @@ public class VersionService implements IVersionService {
     }
 
     @Override
-    public Version put(String secret, Version version) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Version put(String token, Version version) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             applicationUserRepository.check(tx, version.application, tx.getUser());
             versionRepository.update(tx, version);
             Version r = versionRepository.get(tx, version.application, version.id);

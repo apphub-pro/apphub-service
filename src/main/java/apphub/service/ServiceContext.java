@@ -24,12 +24,12 @@ import apphub.service.service.v1.ApplicationUserService;
 import apphub.service.service.v1.BuildService;
 import apphub.service.service.v1.EnvironmentApplicationService;
 import apphub.service.service.v1.EnvironmentService;
-import apphub.service.service.v1.EnvironmentUserSecretService;
+import apphub.service.service.v1.SecretService;
 import apphub.service.service.v1.EnvironmentUserService;
 import apphub.service.service.v1.LoginService;
 import apphub.service.service.v1.TestService;
+import apphub.service.service.v1.TokenService;
 import apphub.service.service.v1.UserKeyService;
-import apphub.service.service.v1.UserSecretService;
 import apphub.service.service.v1.UserService;
 import apphub.service.service.v1.VersionService;
 import apphub.staff.StaffContext;
@@ -48,11 +48,11 @@ public class ServiceContext extends StaffContext {
     protected final BuildService buildService = new BuildService(database, buildRepository, environmentUserRepository);
     protected final EnvironmentApplicationService environmentApplicationService = new EnvironmentApplicationService(database, environmentUserRepository, environmentApplicationRepository);
     protected final EnvironmentService environmentService = new EnvironmentService(database, environmentRepository, environmentUserRepository);
-    protected final EnvironmentUserSecretService environmentUserSecretService = new EnvironmentUserSecretService(database, environmentUserRepository, environmentUserSecretRepository);
+    protected final SecretService secretService = new SecretService(database, environmentUserRepository, secretRepository);
     protected final EnvironmentUserService environmentUserService = new EnvironmentUserService(database, environmentUserRepository);
     protected final LoginService loginService = new LoginService(database, userRepository);
     protected final UserKeyService userKeyService = new UserKeyService(database, userKeyRepository);
-    protected final UserSecretService userSecretService = new UserSecretService(database, userSecretRepository);
+    protected final TokenService tokenService = new TokenService(database, tokenRepository);
     protected final UserService userService = new UserService(database, userRepository);
     protected final VersionService versionService = new VersionService(database, versionRepository, applicationUserRepository);
     protected final LdapService ldapService = new LdapService(database, userRepository);
@@ -93,8 +93,8 @@ public class ServiceContext extends StaffContext {
         return environmentService;
     }
 
-    public EnvironmentUserSecretService getEnvironmentUserSecretService() {
-        return environmentUserSecretService;
+    public SecretService getSecretService() {
+        return secretService;
     }
 
     public EnvironmentUserService getEnvironmentUserService() {
@@ -109,8 +109,8 @@ public class ServiceContext extends StaffContext {
         return userKeyService;
     }
 
-    public UserSecretService getUserSecretService() {
-        return userSecretService;
+    public TokenService getTokenService() {
+        return tokenService;
     }
 
     public UserService getUserService() {

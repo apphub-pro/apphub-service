@@ -42,23 +42,23 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public Application get(String secret, String id) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public Application get(String token, String id) {
+        try (Transaction tx = new Transaction(database, token)) {
             applicationUserRepository.check(tx, id, tx.getUser());
             return applicationRepository.get(tx, id);
         }
     }
 
     @Override
-    public List<Application> list(String secret) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public List<Application> list(String token) {
+        try (Transaction tx = new Transaction(database, token)) {
             return applicationRepository.findByUser(tx, tx.getUser());
         }
     }
 
     @Override
-    public Application post(String secret, Application application) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Application post(String token, Application application) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             applicationRepository.insert(tx, application);
             applicationUserRepository.insert(tx, new ApplicationUser(application.id,
                                                                      tx.getUser(),
@@ -74,8 +74,8 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public Application put(String secret, Application application) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Application put(String token, Application application) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             applicationUserRepository.check(tx, application.id, tx.getUser());
             applicationRepository.update(tx, application);
             Application r = applicationRepository.get(tx, application.id);

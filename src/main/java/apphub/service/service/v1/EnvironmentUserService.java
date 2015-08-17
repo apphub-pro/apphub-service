@@ -39,24 +39,24 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     }
 
     @Override
-    public EnvironmentUser get(String secret, String environment, String user) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public EnvironmentUser get(String token, String environment, String user) {
+        try (Transaction tx = new Transaction(database, token)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
             return environmentUserRepository.get(tx, environment, user);
         }
     }
 
     @Override
-    public List<EnvironmentUser> list(String secret, String environment) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public List<EnvironmentUser> list(String token, String environment) {
+        try (Transaction tx = new Transaction(database, token)) {
             environmentUserRepository.check(tx, environment, tx.getUser());
             return environmentUserRepository.findByEnvironment(tx, environment);
         }
     }
 
     @Override
-    public EnvironmentUser post(String secret, EnvironmentUser environmentUser) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentUser post(String token, EnvironmentUser environmentUser) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {
                 environmentUserRepository.insert(tx, environmentUser);
@@ -70,8 +70,8 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     }
 
     @Override
-    public EnvironmentUser put(String secret, EnvironmentUser environmentUser) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentUser put(String token, EnvironmentUser environmentUser) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             EnvironmentUser user = environmentUserRepository.get(tx, environmentUser.environment, tx.getUser());
             if (user.admin) {
                 environmentUserRepository.update(tx, environmentUser);
@@ -85,8 +85,8 @@ public class EnvironmentUserService implements IEnvironmentUserService {
     }
 
     @Override
-    public EnvironmentUser delete(String secret, String environment, String user) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public EnvironmentUser delete(String token, String environment, String user) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             EnvironmentUser user1 = environmentUserRepository.get(tx, environment, tx.getUser());
             if (user1.admin) {
                 EnvironmentUser r = environmentUserRepository.get(tx, environment, user);

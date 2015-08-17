@@ -51,8 +51,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User get(String secret) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public User get(String token) {
+        try (Transaction tx = new Transaction(database, token)) {
             return userRepository.get(tx, tx.getUser());
         }
     }
@@ -80,7 +80,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User put(String secret, User user) {
+    public User put(String token, User user) {
         return null;
     }
 

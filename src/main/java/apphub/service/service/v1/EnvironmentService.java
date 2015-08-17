@@ -43,23 +43,23 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment get(String secret, String id) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public Environment get(String token, String id) {
+        try (Transaction tx = new Transaction(database, token)) {
             environmentUserRepository.check(tx, id, tx.getUser());
             return environmentRepository.get(tx, id);
         }
     }
 
     @Override
-    public List<Environment> list(String secret) {
-        try (Transaction tx = new Transaction(database, secret)) {
+    public List<Environment> list(String token) {
+        try (Transaction tx = new Transaction(database, token)) {
             return environmentRepository.findByUser(tx, tx.getUser());
         }
     }
 
     @Override
-    public Environment post(String secret, String environmentSecret, Environment environment) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Environment post(String token, String environmentSecret, Environment environment) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             environmentRepository.insert(tx, environment, environmentSecret);
             environmentUserRepository.insert(tx, new EnvironmentUser(environment.id,
                                                                      tx.getUser(),
@@ -75,8 +75,8 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment put(String secret, Environment environment) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Environment put(String token, Environment environment) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             environmentUserRepository.check(tx, environment.id, tx.getUser());
             environmentRepository.update(tx, environment);
             Environment r = environmentRepository.get(tx, environment.id);
@@ -86,8 +86,8 @@ public class EnvironmentService implements IEnvironmentService {
     }
 
     @Override
-    public Environment delete(String secret, String id) {
-        try (Transaction tx = new Transaction(database, false, secret)) {
+    public Environment delete(String token, String id) {
+        try (Transaction tx = new Transaction(database, false, token)) {
             EnvironmentUser user = environmentUserRepository.get(tx, id, tx.getUser());
             if (user.admin) {
                 Environment r = environmentRepository.get(tx, id);
