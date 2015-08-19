@@ -22,7 +22,7 @@ import apphub.service.service.v1.ActivationService;
 import apphub.service.service.v1.ApplicationService;
 import apphub.service.service.v1.ApplicationUserService;
 import apphub.service.service.v1.BuildService;
-import apphub.service.service.v1.EnvironmentApplicationService;
+import apphub.service.service.v1.InstanceService;
 import apphub.service.service.v1.EnvironmentService;
 import apphub.service.service.v1.KeyService;
 import apphub.service.service.v1.SecretService;
@@ -46,7 +46,7 @@ public class ServiceContext extends StaffContext {
     protected final ApplicationService applicationService = new ApplicationService(database, applicationRepository, applicationUserRepository);
     protected final ApplicationUserService applicationUserService = new ApplicationUserService(database, applicationUserRepository);
     protected final BuildService buildService = new BuildService(database, buildRepository, environmentUserRepository);
-    protected final EnvironmentApplicationService environmentApplicationService = new EnvironmentApplicationService(database, environmentUserRepository, environmentApplicationRepository);
+    protected final InstanceService instanceService = new InstanceService(database, environmentUserRepository, instanceRepository);
     protected final EnvironmentService environmentService = new EnvironmentService(database, environmentRepository, environmentUserRepository);
     protected final SecretService secretService = new SecretService(database, environmentUserRepository, secretRepository);
     protected final EnvironmentUserService environmentUserService = new EnvironmentUserService(database, environmentUserRepository);
@@ -85,8 +85,8 @@ public class ServiceContext extends StaffContext {
         return buildService;
     }
 
-    public EnvironmentApplicationService getEnvironmentApplicationService() {
-        return environmentApplicationService;
+    public InstanceService getInstanceService() {
+        return instanceService;
     }
 
     public EnvironmentService getEnvironmentService() {

@@ -51,7 +51,7 @@ public class ServiceApplication extends Application {
         singletons.add(context.getApplicationService());
         singletons.add(context.getApplicationUserService());
         singletons.add(context.getBuildService());
-        singletons.add(context.getEnvironmentApplicationService());
+        singletons.add(context.getInstanceService());
         singletons.add(context.getEnvironmentService());
         singletons.add(context.getSecretService());
         singletons.add(context.getEnvironmentUserService());
