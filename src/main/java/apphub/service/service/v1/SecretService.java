@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Dmitry Kotlyarov, Dmitriy Rogozhin.
+ * Copyright (C) 2014 Dmitry Kotlyarov.
  * All Rights Reserved.
  *
  * CONFIDENTIAL
