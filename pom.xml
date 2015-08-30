@@ -52,22 +52,6 @@
                 <picUrl>https://avatars0.githubusercontent.com/u/3524968</picUrl>
             </properties>
         </developer>
-        <developer>
-            <id>demyanrogozhin</id>
-            <name>Dmitriy Rogozhin</name>
-            <email>demyanrogozhin@apphub.pro</email>
-            <url>https://github.com/demyanrogozhin</url>
-            <organization>AppHub</organization>
-            <organizationUrl>https://www.apphub.pro</organizationUrl>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-            <timezone>Europe/Moscow</timezone>
-            <properties>
-                <picUrl>https://avatars3.githubusercontent.com/u/62989</picUrl>
-            </properties>
-        </developer>
     </developers>
 
     <properties>
